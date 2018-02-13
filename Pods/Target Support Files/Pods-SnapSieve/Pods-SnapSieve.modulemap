@@ -1,0 +1,6 @@
+framework module Pods_SnapSieve {
+  umbrella header "Pods-SnapSieve-umbrella.h"
+
+  export *
+  module * { export * }
+}

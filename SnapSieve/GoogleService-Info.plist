@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>1069221551031-mtkiaesa31f6fs4sbuqgbtdtgg4geqnj.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1069221551031-mtkiaesa31f6fs4sbuqgbtdtgg4geqnj</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAxVV9RWIAGTCZeE_YbAU9QzhOyq8c3SeM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1069221551031</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>Tejas.SnapSieve</string>
+	<key>PROJECT_ID</key>
+	<string>snapsieve</string>
+	<key>STORAGE_BUCKET</key>
+	<string>snapsieve.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1069221551031:ios:5b73e29bd04f8574</string>
+	<key>DATABASE_URL</key>
+	<string>https://snapsieve.firebaseio.com</string>
+</dict>
+</plist>
