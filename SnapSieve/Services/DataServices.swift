@@ -31,6 +31,7 @@ class DataServices{
     //DB_BASE refers to the title of the database
     private var _REF_POST = DB_BASE.child("posts")
     
+    private var _REF_REPORTS = DB_BASE.child("Reports")
     
     //Storage References
     private var _REF_POST_IMAGES = STORAGE_BASE.child("post-pics")
@@ -38,6 +39,9 @@ class DataServices{
     private var _REF_POST_ID = DB_BASE.child("postIDs")
     var REF_POSTS : DatabaseReference{
         return _REF_POST
+    }
+    var REF_REPORTS : DatabaseReference{
+        return _REF_REPORTS
     }
     var REF_POST_ID : DatabaseReference{
         return _REF_POST_ID
@@ -52,6 +56,7 @@ class DataServices{
         if let id = uid {
             print("ID \(id)")
             user = REF_USERS.child(id)
+            
         }
         return user
         

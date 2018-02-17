@@ -46,7 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
             return
         }
         firebaseAuth(credential: credential)
-        showLoginScreen()
+        
         
     }
     func firebaseAuth(credential : AuthCredential){
@@ -69,6 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
     func completeSignIn(id : String, userData : Dictionary<String,String>)
     {
         KeychainWrapper.standard.set(id, forKey: KEY_UID)
+        showLoginScreen()
         DataServices.ds.createFirebaseUser(uid: id, userData: userData)
         
         

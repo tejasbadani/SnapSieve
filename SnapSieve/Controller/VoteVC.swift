@@ -18,6 +18,10 @@ import GameplayKit
 import Koloda
 import FirebaseStorage
 import UICircularProgressRing
+import NVActivityIndicatorView
+import SVProgressHUD
+import BulletinBoard
+import ZAlertView
 class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelegate {
    
 
@@ -68,6 +72,14 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
     var imageArray2 = [UIImage]()
     var isGoingToNextCard : Bool = false
     var didComeFromSwipe : Bool = false
+    lazy var bulletinManager: BulletinManager = {
+        let page = PageBulletinItem(title: "Location Services")
+        page.image = #imageLiteral(resourceName: "location")
+        page.descriptionText = "Enable location services to continue using the app!"
+        page.actionButtonTitle = "Go to settings"
+        return BulletinManager(rootItem: page)
+    }()
+    
     override func viewDidLayoutSubviews() {
         isViewShown = false
         toggleHidden(hide: true)
@@ -84,10 +96,55 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        print("USER IS ::: \(DataServices.ds.REF_CURRENT_USER)")
+        ZAlertView.positiveColor            = UIColor.color("#669999")
+        ZAlertView.negativeColor            = UIColor.color("#CC3333")
+        ZAlertView.blurredBackground        = false
+        ZAlertView.showAnimation            = .bounceBottom
+        ZAlertView.hideAnimation            = .bounceTop
+        ZAlertView.initialSpringVelocity    = 0.9
+        ZAlertView.duration                 = 2
+        ZAlertView.textFieldTextColor       = UIColor.brown
+        ZAlertView.textFieldBackgroundColor = UIColor.color("#EFEFEF")
+        ZAlertView.textFieldBorderColor     = UIColor.color("#669999")
+        
         let gestureRecogniser = UISwipeGestureRecognizer(target: self, action: #selector(animateUIView))
         gestureRecogniser.direction = .up
         self.toBeSwipedView.addGestureRecognizer(gestureRecogniser)
+        retrieveUserData()
         determineCurrentLocation()
+        
+    }
+    
+    func retrieveUserData(){
+       User.u.userID = KeychainWrapper.standard.string(forKey: KEY_UID)!
+       DataServices.ds.REF_CURRENT_USER.observe(.value) { (snapshot) in
+            guard snapshot.exists() else{return}
+            
+            if let votes = snapshot.childSnapshot(forPath: "votes").value{
+                if votes is NSNull{
+                    User.u.votes = 0
+                }else{
+                    User.u.votes = votes as! Int
+                }
+                
+            }else{
+                User.u.votes = 0
+            }
+            
+            if let noOfPosts = snapshot.childSnapshot(forPath: "remainingPosts").value{
+                if noOfPosts is NSNull{
+                    User.u.remainingPosts = 1
+                }else{
+                    User.u.remainingPosts = noOfPosts as! Int
+                }
+                
+            }else{
+                User.u.remainingPosts = 0
+            }
+            
+        }
     }
     func determineCurrentLocation(){
         locationManager = CLLocationManager()
@@ -96,7 +153,10 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
         locationManager.requestWhenInUseAuthorization()
         if CLLocationManager.locationServicesEnabled() {
             locationManager.startUpdatingLocation()
-            print("Executed")
+           
+            SVProgressHUD.setBackgroundColor(UIColor.lightGray)
+            SVProgressHUD.show()
+    
             checkData(completionHandler: { (success) in
                 self.getResultPostID(completionHandler: { (check) in
                     self.generateRandomElements(completionHandler: { (check) in
@@ -106,6 +166,18 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
                     })
                 })
             })
+        }else{
+            let dialog = ZAlertView(title: "Sorry",
+                                    message: "You don't seem to have your location services enabled. Enable location services in settings to use the app.",
+                                    closeButtonText: "Retry",
+                                    closeButtonHandler: { alertView in
+                                        self.determineCurrentLocation()
+                                        alertView.dismissAlertView()
+            }
+            )
+            dialog.allowTouchOutsideToDismiss = false
+            dialog.show()
+            
         }
     }
     func checkData(completionHandler: @escaping arrayClosure){
@@ -158,6 +230,7 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
     }
     
     func generateRandomElements(completionHandler : @escaping postResultArray){
+        shuffled = []
         shuffled = GKMersenneTwisterRandomSource.sharedRandom().arrayByShufflingObjects(in: resultPostID)
         completionHandler(true)
     }
@@ -303,12 +376,39 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
         }
         
         grp.notify(queue: .main) {
-            self.kolodaView1.resetCurrentCardIndex()
-            self.kolodaView2.resetCurrentCardIndex()
-            self.kolodaView1.dataSource = self
-            self.kolodaView1.delegate = self
-            self.kolodaView2.dataSource = self
-            self.kolodaView2.delegate = self
+            print("POST ::: \(self.posts)")
+            SVProgressHUD.dismiss()
+            
+            if (self.posts.count > 0 ){
+                self.kolodaView1.dataSource = self
+                self.kolodaView1.delegate = self
+                self.kolodaView2.dataSource = self
+                self.kolodaView2.delegate = self
+                self.kolodaView1.resetCurrentCardIndex()
+                self.kolodaView2.resetCurrentCardIndex()
+            }else{
+                let dialog = ZAlertView(title: "Sorry",
+                                        message: "There there seem to be no posts near you. Get started by posting your own dilemma. Please try again later.",
+                                        isOkButtonLeft: true,
+                                        okButtonText: "Upload Photo",
+                                        cancelButtonText: "Retry",
+                                        okButtonHandler: { (alertView) -> () in
+                                            alertView.dismissAlertView()
+                                            //self.performSegue(withIdentifier: "ProfileVC", sender: nil)
+                                            //TODO Upload photo
+                },
+                                        cancelButtonHandler: { (alertView) -> () in
+                                            
+                                            alertView.dismissAlertView()
+                                            self.determineCurrentLocation()
+                }
+                    
+                )
+                
+                dialog.show()
+                dialog.allowTouchOutsideToDismiss = true
+            }
+           
         }
         
         
@@ -327,8 +427,35 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
   
     @IBAction func actionSheetClicked(_ sender: Any) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let firstAction = UIAlertAction(title: "Report Image", style: .destructive) { (alert) in
-            
+        let firstAction = UIAlertAction(title: "Report Post", style: .destructive) { (alert) in
+            let dialog = ZAlertView(title: "Report Post",
+                                    message: "Are you sure you want to report the post?",
+                                    isOkButtonLeft: true,
+                                    okButtonText: "Yes",
+                                    cancelButtonText: "No",
+                                    okButtonHandler: { (alertView) -> () in
+                                        //Handle the report action
+                                        let dict = [self.posts[self.kolodaView1.currentCardIndex].postID : true]
+                                        DataServices.ds.REF_REPORTS.updateChildValues(dict)
+                                        alertView.dismissAlertView()
+                                        //TODO
+                                        let dialog2 = ZAlertView(title: "Success",
+                                                                message: "The Post has been reported successfully. Thank you for your cooperation.",
+                                                                closeButtonText: "Okay",
+                                                                closeButtonHandler: { alertView in
+                                                                    alertView.dismissAlertView()
+                                        }
+                                        )
+                                        dialog2.allowTouchOutsideToDismiss = true
+                                        dialog2.show()
+                                        
+            },
+                                    cancelButtonHandler: { (alertView) -> () in
+                                        alertView.dismissAlertView()
+            }
+            )
+            dialog.show()
+            dialog.allowTouchOutsideToDismiss = true
         }
         let secondAction = UIAlertAction(title: "Log Out", style: .destructive) { (alert) in
             try! Auth.auth().signOut()
@@ -427,11 +554,25 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
     }
     @IBAction func uploadPhoto(_ sender: Any) {
         
-        Config.tabsToShow = [.imageTab, .cameraTab]
-        Config.Camera.imageLimit = 2
-        let gallery = GalleryController()
-        gallery.delegate = self
-        present(gallery, animated: true, completion: nil)
+        if (User.u.remainingPosts > 0){
+            Config.tabsToShow = [.imageTab, .cameraTab]
+            Config.Camera.imageLimit = 2
+            let gallery = GalleryController()
+            gallery.delegate = self
+            present(gallery, animated: true, completion: nil)
+        }else{
+            //Alert to tell user nope
+            let dialog = ZAlertView(title: "Oops",
+                                    message: "Seems like you haven't voted enough. Vote more to post!",
+                                    closeButtonText: "Okay",
+                                    closeButtonHandler: { alertView in
+                                        alertView.dismissAlertView()
+            }
+            )
+            dialog.allowTouchOutsideToDismiss = true
+            dialog.show()
+        }
+       
         
     }
     @IBAction func viewProfile(_ sender: Any) {
@@ -447,59 +588,10 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
     }
 }
 
-extension UIImage {
-    func crop(to:CGSize) -> UIImage {
-        guard let cgimage = self.cgImage else { return self }
-        
-        let contextImage: UIImage = UIImage(cgImage: cgimage)
-        
-        let contextSize: CGSize = contextImage.size
-        
-        //Set to square
-        var posX: CGFloat = 0.0
-        var posY: CGFloat = 0.0
-        let cropAspect: CGFloat = to.width / to.height
-        
-        var cropWidth: CGFloat = to.width
-        var cropHeight: CGFloat = to.height
-        
-        if to.width > to.height { //Landscape
-            cropWidth = contextSize.width
-            cropHeight = contextSize.width / cropAspect
-            posY = (contextSize.height - cropHeight) / 2
-        } else if to.width < to.height { //Portrait
-            cropHeight = contextSize.height
-            cropWidth = contextSize.height * cropAspect
-            posX = (contextSize.width - cropWidth) / 2
-        } else { //Square
-            if contextSize.width >= contextSize.height { //Square on landscape (or square)
-                cropHeight = contextSize.height
-                cropWidth = contextSize.height * cropAspect
-                posX = (contextSize.width - cropWidth) / 2
-            }else{ //Square on portrait
-                cropWidth = contextSize.width
-                cropHeight = contextSize.width / cropAspect
-                posY = (contextSize.height - cropHeight) / 2
-            }
-        }
-        
-        let rect: CGRect = CGRect(x : posX, y : posY, width : cropWidth, height : cropHeight)
-        
-        // Create bitmap image from context using the rect
-        let imageRef: CGImage = contextImage.cgImage!.cropping(to: rect)!
-        
-        // Create a new image based on the imageRef and rotate back to the original orientation
-        let cropped: UIImage = UIImage(cgImage: imageRef, scale: self.scale, orientation: self.imageOrientation)
-        
-        cropped.draw(in: CGRect(x : 0, y : 0, width : to.width, height : to.height))
-        
-        return cropped
-    }
-}
+
 
 extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
     func koloda(_ koloda: KolodaView, viewForCardAt index: Int) -> UIView {
-        
         if (koloda == kolodaView1){
             let im = UIImageView(image: imageArray1[index])
             im.contentMode = .scaleAspectFit
@@ -520,26 +612,14 @@ extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
     func koloda(_ koloda: KolodaView, didSwipeCardAt index: Int, in direction: SwipeResultDirection) {
         print(koloda.countOfCards)
         
-        //If both the indexes are 1 then you must continue but only if one of the index is 1 then return
-//        if koloda.countOfCards-1 == index {
-//            //determineCurrentLocation()
-//           return
+        
+        
+//        if index == koloda.countOfCards-1  {
 //
-//        }
-//        if kolodaView1.countOfCards-1 == index && (kolodaView2.countOfCards-1 != index){
 //            return
-//        }else if kolodaView2.countOfCards-1 == index && (kolodaView1.countOfCards-1 != index){
-//            return
-//        }else{
-//            //Do nothing
 //        }
-        if index == koloda.countOfCards-1  {
-            
-            return
-        }
         
         if !(isGoingToNextCard == true){
-            
             
             if(koloda == kolodaView1){
                 
@@ -548,6 +628,7 @@ extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
                     animateViewHidden(kolodaView: kolodaView1)
                     let totalVotes:Float = posts[index].votesImage1 + posts[index].votesImage2
                     animateCircularView(circularView: circularRing2, totalVotes: totalVotes, numeratorVotes: posts[index].votesImage2, viewOne: kolodaView2, viewTwo: kolodaView1)
+                self.scoreCounter.text = "\(User.u.votes!)/5"
                 
             }else{
                 
@@ -555,6 +636,8 @@ extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
                     animateViewHidden(kolodaView: kolodaView2)
                     let totalVotes:Float = posts[index].votesImage1 + posts[index].votesImage2
                     animateCircularView(circularView: circularRing1, totalVotes: totalVotes, numeratorVotes: posts[index].votesImage1, viewOne: kolodaView1, viewTwo: kolodaView2)
+                self.scoreCounter.text = "\(User.u.votes!)/5"
+                
                
             }
             
@@ -566,17 +649,18 @@ extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
     }
     
     func koloda(_ koloda: KolodaView, didSelectCardAt index: Int) {
+       
         print("Executing DidSelect")
+        print("INDEX: \(index)")
         if (koloda == self.kolodaView1){
             posts[index].adjustVotes1()
+            //TODO
             isGoingToNextCard = true
             kolodaView2.swipe(.left)
             animateViewHidden(kolodaView: kolodaView2)
             let totalVotes:Float = posts[index].votesImage1 + posts[index].votesImage2
             animateCircularView(circularView: circularRing1, totalVotes: totalVotes, numeratorVotes: posts[index].votesImage1, viewOne: kolodaView1, viewTwo: kolodaView2)
-            if koloda.countOfCards == 0{
-                
-            }
+            self.scoreCounter.text = "\(User.u.votes!)/5"
 
         }else{
             posts[index].adjustVotes2()
@@ -585,10 +669,13 @@ extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
             animateViewHidden(kolodaView: kolodaView1)
             let totalVotes:Float = posts[index].votesImage1 + posts[index].votesImage2
             animateCircularView(circularView: circularRing2, totalVotes: totalVotes, numeratorVotes: posts[index].votesImage2, viewOne: kolodaView2, viewTwo: kolodaView1)
+            self.scoreCounter.text = "\(User.u.votes!)/5"
             
         }
     }
     func animateCircularView(circularView : UICircularProgressRingView ,totalVotes : Float , numeratorVotes : Float , viewOne : KolodaView , viewTwo: KolodaView){
+        
+       
         circularView.isHidden = false
         print("TOTAL VOTES : \(totalVotes) NUMERATORVOTES : \(numeratorVotes)")
         let  votePercentage :Float = Float((numeratorVotes/totalVotes) * 100)
@@ -598,14 +685,26 @@ extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
         }else{
             circularView.innerRingColor = UIColor.green
         }
+        viewOne.alpha = 0.5
         circularView.setProgress(value: CGFloat(votePercentage), animationDuration: 3) {
-            //Completion Handler
             
-            viewOne.swipe(.left)
+            if User.u.votes == 0{
+                let dialog = ZAlertView(title: "Well Done!",
+                                        message: "You now have acccess to one more post! ",
+                                        closeButtonText: "Okay",
+                                        closeButtonHandler: { alertView in
+                                            alertView.dismissAlertView()
+                }
+                )
+                dialog.allowTouchOutsideToDismiss = true
+                dialog.show()
+            }
             self.isGoingToNextCard = true
+            viewOne.swipe(.left)
             circularView.isHidden = true
             UIView.animate(withDuration: 0.5, delay: 0.1, options: .curveEaseIn, animations: {
                 viewTwo.alpha = 1.0
+                viewOne.alpha = 1.0
                 circularView.value = 0
             }, completion: { (check) in
                 
@@ -636,7 +735,11 @@ extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
     }
     func kolodaDidRunOutOfCards(_ koloda: KolodaView) {
         if kolodaView1 == koloda{
-            determineCurrentLocation()
+            DispatchQueue.main.asyncAfter(deadline: .now()+0.5, execute: {
+                
+                self.determineCurrentLocation()
+            })
+           
         }
       
     }

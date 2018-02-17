@@ -12,6 +12,7 @@ import Firebase
 import GoogleSignIn
 import FBSDKLoginKit
 import SwiftKeychainWrapper
+import ZAlertView
 class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSignInUIDelegate {
   
 
@@ -35,6 +36,17 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
     ]
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        ZAlertView.positiveColor            = UIColor.color("#669999")
+        ZAlertView.negativeColor            = UIColor.color("#CC3333")
+        ZAlertView.blurredBackground        = true
+        ZAlertView.showAnimation            = .bounceBottom
+        ZAlertView.hideAnimation            = .bounceTop
+        ZAlertView.initialSpringVelocity    = 0.9
+        ZAlertView.duration                 = 2
+        ZAlertView.textFieldTextColor       = UIColor.brown
+        ZAlertView.textFieldBackgroundColor = UIColor.color("#EFEFEF")
+        ZAlertView.textFieldBorderColor     = UIColor.color("#669999")
         
         let gestureRecogiser = UISwipeGestureRecognizer(target: self, action: #selector(transtionBack))
         gestureRecogiser.direction = .down
@@ -65,8 +77,10 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
             faceBookLogin.logIn(withReadPermissions: ["email"], from: self) { (result, error) in
                 if error != nil{
                     print("Error occured")
+                    self.showAlert()
                 }else if result?.isCancelled == true{
                     print("User Cancelled login")
+                   self.showAlert()
                 }else{
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
                         let credential = FacebookAuthProvider.credential(withAccessToken: FBSDKAccessToken.current().tokenString)
@@ -80,6 +94,18 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
                 }
             }
        
+    }
+    
+    func showAlert(){
+        let dialog = ZAlertView(title: "Oops",
+                                message: "There seems to be a problem. Please try again.",
+                                closeButtonText: "Okay",
+                                closeButtonHandler: { alertView in
+                                    alertView.dismissAlertView()
+        }
+        )
+        dialog.allowTouchOutsideToDismiss = false
+        dialog.show()
     }
     
     func transition(){
@@ -97,6 +123,7 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
         Auth.auth().signIn(with: credential) { (user, error) in
             if(error != nil){
                 print("Could not authenticate")
+                self.showAlert()
             }else {
                 if let user = user {
                     group.enter()
@@ -107,6 +134,7 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
                 }
             }
             group.notify(queue: .main, execute: {
+                
                 completionHandler(true)
             })
             
@@ -116,7 +144,7 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
     
     func completeSignIn(id : String, userData : Dictionary<String,String>)
     {
-        print("EXECUTED")
+        //print("EXECUTED")
         KeychainWrapper.standard.set(id, forKey: KEY_UID)
         DataServices.ds.createFirebaseUser(uid: id, userData: userData)
         

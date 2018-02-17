@@ -42,16 +42,31 @@ class Post{
         _updateVotesImage2Ref = DataServices.ds.REF_POSTS.child(_postID).child("image2")
         _userDidVoteRef = DataServices.ds.REF_CURRENT_USER
     }
+   
     func adjustVotes1(){
+        User.u.votes = User.u.votes + 1
+        if User.u.votes == 5{
+            User.u.votes = 0
+            User.u.remainingPosts = User.u.remainingPosts + 1
+        }
         self._votesImage1 = self._votesImage1 + 1
         _updateVotesImage1Ref.child("votes").setValue(_votesImage1)
         let postID : Dictionary<String,AnyObject> = [_postID : true as AnyObject]
         //_userDidVoteRef.child("votedPosts").updateChildValues(postID)
+        DataServices.ds.REF_CURRENT_USER.child("votes").setValue(User.u.votes)
+        DataServices.ds.REF_CURRENT_USER.child("remainingPosts").setValue(User.u.remainingPosts)
     }
     func adjustVotes2(){
+        User.u.votes = User.u.votes + 1
+        if User.u.votes == 5{
+            User.u.votes = 0
+            User.u.remainingPosts = User.u.remainingPosts + 1
+        }
         self._votesImage2 = self._votesImage2 + 1
         _updateVotesImage2Ref.child("votes").setValue(_votesImage2)
         let postID : Dictionary<String,AnyObject> = [_postID : true as AnyObject]
         //_userDidVoteRef.child("votedPosts").updateChildValues(postID)
+        DataServices.ds.REF_CURRENT_USER.child("votes").setValue(User.u.votes)
+        DataServices.ds.REF_CURRENT_USER.child("remainingPosts").setValue(User.u.remainingPosts)
     }
 }

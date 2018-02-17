@@ -10,6 +10,7 @@
 		9606C27F2024379E0035E51A /* ShadowImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9606C27E2024379E0035E51A /* ShadowImage.swift */; };
 		960F889F201F4212006D8326 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 960F889E201F4212006D8326 /* GoogleService-Info.plist */; };
 		960F88A3201F4CDB006D8326 /* DataServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960F88A2201F4CDB006D8326 /* DataServices.swift */; };
+		961B8C2A2033F5980048FFC5 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961B8C292033F5980048FFC5 /* User.swift */; };
 		9622547C201E188D00F556F1 /* ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9622547B201E188C00F556F1 /* ProfileVC.swift */; };
 		9622547E201E193F00F556F1 /* ProfileVCCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9622547D201E193F00F556F1 /* ProfileVCCell.swift */; };
 		963BD4A02022222A00549A9A /* ViewBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963BD49F2022222A00549A9A /* ViewBackground.swift */; };
@@ -40,6 +41,7 @@
 		960F889E201F4212006D8326 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		960F88A0201F44B6006D8326 /* SnapSieve.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SnapSieve.entitlements; sourceTree = "<group>"; };
 		960F88A2201F4CDB006D8326 /* DataServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataServices.swift; sourceTree = "<group>"; };
+		961B8C292033F5980048FFC5 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		9622547B201E188C00F556F1 /* ProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVC.swift; sourceTree = "<group>"; };
 		9622547D201E193F00F556F1 /* ProfileVCCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVCCell.swift; sourceTree = "<group>"; };
 		963BD49F2022222A00549A9A /* ViewBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewBackground.swift; sourceTree = "<group>"; };
@@ -135,7 +137,6 @@
 				9681A6B0201A64AA001D26E4 /* Controller */,
 				9681A6AF201A64A5001D26E4 /* View */,
 				9681A6AE201A649E001D26E4 /* Model */,
-				9681A69A201A106D001D26E4 /* AppDelegate.swift */,
 				9681A69E201A106D001D26E4 /* Main.storyboard */,
 				9681A6A1201A106D001D26E4 /* Assets.xcassets */,
 				9681A6A3201A106D001D26E4 /* LaunchScreen.storyboard */,
@@ -150,6 +151,7 @@
 			isa = PBXGroup;
 			children = (
 				96EBD32920260B0000F38202 /* Post.swift */,
+				961B8C292033F5980048FFC5 /* User.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -218,6 +220,7 @@
 		96FA1F87202E12880062737F /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				9681A69A201A106D001D26E4 /* AppDelegate.swift */,
 				96FA1F88202E12A10062737F /* OverlayView.xib */,
 				96FA1F8A202E13040062737F /* KolodaOverlay.swift */,
 			);
@@ -355,6 +358,7 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-SnapSieve/Pods-SnapSieve-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
+				"${BUILT_PRODUCTS_DIR}/BulletinBoard/BulletinBoard.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKLoginKit/FBSDKLoginKit.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMOAuth2/GTMOAuth2.framework",
@@ -363,8 +367,12 @@
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/Hero/Hero.framework",
 				"${BUILT_PRODUCTS_DIR}/Koloda/Koloda.framework",
+				"${BUILT_PRODUCTS_DIR}/NVActivityIndicatorView/NVActivityIndicatorView.framework",
+				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework",
 				"${BUILT_PRODUCTS_DIR}/UICircularProgressRing/UICircularProgressRing.framework",
+				"${BUILT_PRODUCTS_DIR}/UIImageCropper/UIImageCropper.framework",
+				"${BUILT_PRODUCTS_DIR}/ZAlertView/ZAlertView.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 				"${BUILT_PRODUCTS_DIR}/pop/pop.framework",
@@ -372,6 +380,7 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BulletinBoard.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKLoginKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMOAuth2.framework",
@@ -380,8 +389,12 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Hero.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Koloda.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NVActivityIndicatorView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftKeychainWrapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UICircularProgressRing.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UIImageCropper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZAlertView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/pop.framework",
@@ -406,6 +419,7 @@
 				960F88A3201F4CDB006D8326 /* DataServices.swift in Sources */,
 				9622547C201E188D00F556F1 /* ProfileVC.swift in Sources */,
 				963BD4A02022222A00549A9A /* ViewBackground.swift in Sources */,
+				961B8C2A2033F5980048FFC5 /* User.swift in Sources */,
 				9681A6B4201A6627001D26E4 /* LoginVC.swift in Sources */,
 				963BD4A420224C3300549A9A /* PHAssetToImage.swift in Sources */,
 				96EBD341202638B000F38202 /* GFGeoHash.m in Sources */,
