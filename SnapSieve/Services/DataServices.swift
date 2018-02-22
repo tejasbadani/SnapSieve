@@ -17,6 +17,7 @@ import SwiftKeychainWrapper
 let DB_BASE = Database.database().reference()
 let STORAGE_BASE = Storage.storage().reference()
 let KEY_UID = "uid"
+let KEY_NAME = "name"
 class DataServices{
     static let ds = DataServices()
     private var _REF_BASE = DB_BASE
@@ -60,6 +61,14 @@ class DataServices{
         }
         return user
         
+    }
+    var CURRENT_USER_NAME : String{
+        let name = KeychainWrapper.standard.string(forKey: KEY_NAME)
+        var fullName : String!
+        if let nm = name {
+            fullName = nm
+        }
+        return fullName
     }
     
     

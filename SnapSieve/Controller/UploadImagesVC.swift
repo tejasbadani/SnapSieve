@@ -13,15 +13,14 @@ import SwiftKeychainWrapper
 import UICircularProgressRing
 import CoreLocation
 import SVProgressHUD
-import UIImageCropper
-class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelegate,UIImageCropperProtocol {
+import CropViewController
+class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelegate,CropViewControllerDelegate {
    
     //@IBOutlet weak var circularProgressView: UICircularProgressRingView!
     var locationManager : CLLocationManager!
     var isCameraOne : Bool = false
     var convert = PHToImage()
-    let picker = UIImagePickerController()
-    let cropper = UIImageCropper(cropRatio: 4/3)
+    
     var originalImage1 : UIImage!
     var originalImage2 : UIImage!
     @IBOutlet weak var image1: UIImageView!
@@ -33,17 +32,48 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
         super.viewDidLoad()
 
         if let i = img1{
-            let image = i.crop(to: CGSize(width: 343, height: 270))
+            //let image = i.crop(to: CGSize(width: 343, height: 270))
+            //let image = i.scaled(to: CGSize(width: 343, height: 270))
+            //let image = ResizeImage(image: i, targetSize: CGSize(width: 343, height: 270))
+            
+//            let imageWidth = Double(i.size.width)
+//            let imageHeight = Double(i.size.height)
+//            let width = Double(self.image1.frame.width)
+//            let height = Double(self.image1.frame.height)
+//            let origin = CGPoint(x: (imageWidth - width)/2, y: (imageHeight - height)/2)
+//            let size = CGSize(width: width, height: height)
+            
+            //let image = i.crop(rect: CGRect(x: 0, y: 0, width: image1.frame.width, height: image1.frame.height))
+            
+            //let image = i.crop(rect: CGRect(origin: origin, size: size))
+            //let image = i.resizedImageWithinRect(rectSize: CGSize(width: 343, height: 270))
+            let image = cropImageToSquare(image: i)
             image1.image = image
             originalImage1 = i
         }
         if let i = img2{
-            let image = i.crop(to: CGSize(width: 343, height: 270))
+            //let image = i.crop(to: CGSize(width: 343, height: 270))
+            //let image = i.scaled(to: CGSize(width: 343, height: 270))
+            //let image = i.crop(rect: CGRect(x: 0, y: 0, width: image2.frame.width, height: image2.frame.height))
+            
+//            let imageWidth = Double(i.size.width)
+//            let imageHeight = Double(i.size.height)
+//            let width = Double(self.image2.frame.width)
+//            let height = Double(self.image2.frame.height)
+//            let origin = CGPoint(x: (imageWidth - width)/2, y: (imageHeight - height)/2)
+//            let size = CGSize(width: width*4, height: height*4)
+            
+            //let image = i.crop(rect: CGRect(x: 0, y: 0, width: image1.frame.width, height: image1.frame.height))
+            
+            //let image = i.crop(rect: CGRect(origin: origin, size: size))
+            
+            let image = cropImageToSquare(image: i)
             image2.image = image
             originalImage2 = i
         }
     }
     
+  
     
     override func viewWillAppear(_ animated: Bool) {
         determineCurrentLocation()
@@ -102,10 +132,10 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
                     }
                     
                 }
-                let obs = taskUpload.observe(.progress, handler: { (snapshot) in
-                    print(snapshot.progress)
-                    
-                })
+//                let obs = taskUpload.observe(.progress, handler: { (snapshot) in
+//                    print(snapshot.progress)
+//
+//                })
             }
         
             
@@ -139,7 +169,10 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
             SVProgressHUD.setBorderColor(UIColor.lightGray)
             SVProgressHUD.setBorderWidth(2.0)
             SVProgressHUD.showSuccess(withStatus: "Posted! Check back later to see your result!")
+            User.u.remainingPosts = User.u.remainingPosts - 1
+            DataServices.ds.REF_CURRENT_USER.child("remainingPosts").setValue(User.u.remainingPosts)
             self.dismiss(animated: true, completion: nil)
+            
         }
        
         
@@ -157,6 +190,8 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
         firebasePost2.updateChildValues(userID)
         let id = POST_REF.key
         let postID : Dictionary<String,AnyObject> = [id : true as AnyObject]
+        DataServices.ds.REF_POSTS.child(id).setValue(["name": DataServices.ds.CURRENT_USER_NAME])
+        DataServices.ds.REF_POSTS.child(id).child("isVotingEnabled").setValue(true)
         DataServices.ds.REF_CURRENT_USER.child("posts").updateChildValues(postID)
         DataServices.ds.REF_CURRENT_USER.child("votedPosts").updateChildValues(postID)
         DataServices.ds.REF_POST_ID.updateChildValues(postID)
@@ -177,12 +212,16 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
         showGallery()
     }
     @IBAction func cancelClicked(_ sender: Any) {
+        originalImage1 = nil
+        originalImage2 = nil
+        image1.image = nil
+        image2.image = nil
         dismiss(animated: true, completion: nil)
         
     }
     
     func showGallery(){
-        Config.tabsToShow = [.imageTab, .cameraTab]
+        Config.tabsToShow = [.imageTab]
         Config.Camera.imageLimit = 1
         let gallery = GalleryController()
         gallery.delegate = self
@@ -209,21 +248,78 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
         
     }
     @IBAction func cropImage1(_ sender: Any) {
+//        let picker = UIImagePickerController()
+//        let cropper = UIImageCropper(cropRatio: 4/3)
+//        cropper.picker = picker
+//        cropper.delegate = self
+//        cropper.image = originalImage1
+//        cropper.cancelButtonText = "Cancel"
+//        self.present(cropper, animated: true, completion: nil)
+
         
-        cropper.picker = picker
-        cropper.delegate = self
-        cropper.image = originalImage1
-        cropper.cancelButtonText = "Cancel"
-        self.present(self.cropper, animated: true, completion: nil)
+        
+        let image: UIImage = originalImage1 //Load an image
+        let cropViewController = CropViewController(image: image)
+        cropViewController.delegate = self
+        
+        cropViewController.aspectRatioPreset = .preset4x3
+        cropViewController.aspectRatioPickerButtonHidden = true
+        cropViewController.aspectRatioLockEnabled = true
         checkString = "1"
+        present(cropViewController, animated: true, completion: nil)
+        
+        
     }
+    func cropViewController(_ cropViewController: CropViewController, didCropImageToRect rect: CGRect, angle: Int) {
+//        let croppedImage = originalImage1.crop(rect: rect)
+//        //let croppedImage = UIImage(cgImage: finalImage)
+//        if checkString == "1"{
+//            self.image1.image = croppedImage
+//            checkString = "Random"
+//        }else if checkString == "0"{
+//            self.image2.image = croppedImage
+//            checkString = "Random"
+//        }
+    }
+    func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
+       
+            //let finalImage:CGImage = (image.cgImage?.cropping(to: cropRect))!
+            //let croppedImage = UIImage(cgImage: finalImage)
+            if checkString == "1"{
+                let croppedImage = originalImage1.crop(rect: cropRect)
+                self.image1.image = croppedImage
+                checkString = "Random"
+            }else if checkString == "0"{
+                let croppedImage = originalImage2.crop(rect: cropRect)
+                self.image2.image = croppedImage
+                checkString = "Random"
+            }
+
+        print(cropRect)
+        print(image)
+        dismiss(animated: true, completion: nil)
+    }
+    
+    
     @IBAction func cropImage2(_ sender: Any) {
-        cropper.picker = picker
-        cropper.delegate = self
-        cropper.image = originalImage2
-        cropper.cancelButtonText = "Cancel"
-        self.present(self.cropper, animated: true, completion: nil)
+//        let picker = UIImagePickerController()
+//        let cropper = UIImageCropper(cropRatio: 4/3)
+//        cropper.picker = picker
+//        cropper.delegate = self
+//        cropper.image = originalImage2
+//        cropper.cancelButtonText = "Cancel"
+//        self.present(cropper, animated: true, completion: nil)
+//        checkString = "0"
+        
+        let image: UIImage = originalImage2 //Load an image
+        let cropViewController = CropViewController(image: image)
+        cropViewController.delegate = self
+        cropViewController.aspectRatioPickerButtonHidden = true
+        cropViewController.aspectRatioPreset = .preset4x3
+        cropViewController.aspectRatioLockEnabled = true
+        
         checkString = "0"
+        present(cropViewController, animated: true, completion: nil)
     }
     
     func galleryController(_ controller: GalleryController, didSelectVideo video: Video) {
@@ -239,7 +335,9 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
     }
     
     func didCropImage(originalImage: UIImage?, croppedImage: UIImage?) {
+        print("EXECUTED THIS SHIT")
         if checkString == "1"{
+        
             self.image1.image = croppedImage
             checkString = "Random"
         }else if checkString == "0"{
@@ -247,57 +345,54 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
             checkString = "Random"
         }
     }
-    
-    
-
-}
-
-extension UIImage {
-    func crop(to:CGSize) -> UIImage {
-        guard let cgimage = self.cgImage else { return self }
+    func cropImageToSquare(image: UIImage) -> UIImage? {
+        var imageHeight = image.size.height
+        var imageWidth = image.size.width
         
-        let contextImage: UIImage = UIImage(cgImage: cgimage)
-        
-        let contextSize: CGSize = contextImage.size
-        
-        //Set to square
-        var posX: CGFloat = 0.0
-        var posY: CGFloat = 0.0
-        let cropAspect: CGFloat = to.width / to.height
-        
-        var cropWidth: CGFloat = to.width
-        var cropHeight: CGFloat = to.height
-        
-        if to.width > to.height { //Landscape
-            cropWidth = contextSize.width
-            cropHeight = contextSize.width / cropAspect
-            posY = (contextSize.height - cropHeight) / 2
-        } else if to.width < to.height { //Portrait
-            cropHeight = contextSize.height
-            cropWidth = contextSize.height * cropAspect
-            posX = (contextSize.width - cropWidth) / 2
-        } else { //Square
-            if contextSize.width >= contextSize.height { //Square on landscape (or square)
-                cropHeight = contextSize.height
-                cropWidth = contextSize.height * cropAspect
-                posX = (contextSize.width - cropWidth) / 2
-            }else{ //Square on portrait
-                cropWidth = contextSize.width
-                cropHeight = contextSize.width / cropAspect
-                posY = (contextSize.height - cropHeight) / 2
-            }
+        if imageHeight > imageWidth {
+            imageHeight = imageWidth
+        }
+        else {
+            imageWidth = imageHeight
         }
         
-        let rect: CGRect = CGRect(x : posX, y : posY, width : cropWidth, height : cropHeight)
+        let size = CGSize(width: imageWidth, height: imageHeight)
         
-        // Create bitmap image from context using the rect
-        let imageRef: CGImage = contextImage.cgImage!.cropping(to: rect)!
+        let refWidth : CGFloat = CGFloat(image.cgImage!.width)
+        let refHeight : CGFloat = CGFloat(image.cgImage!.height)
         
-        // Create a new image based on the imageRef and rotate back to the original orientation
-        let cropped: UIImage = UIImage(cgImage: imageRef, scale: self.scale, orientation: self.imageOrientation)
+        let x = (refWidth - size.width) / 2
+        let y = (refHeight - size.height) / 2
         
-        cropped.draw(in: CGRect(x : 0, y : 0, width : to.width, height : to.height))
+        let cropRect = CGRect(x: x, y: y, width: size.height, height: size.width)
+        if let imageRef = image.cgImage!.cropping(to: cropRect) {
+            return UIImage(cgImage: imageRef, scale: 0, orientation: image.imageOrientation)
+        }
         
-        return cropped
+        return nil
     }
+    
+
 }
+
+
+
+extension UIImage {
+    
+    func crop( rect: CGRect) -> UIImage {
+        var rect = rect
+        rect.origin.x*=self.scale
+        rect.origin.y*=self.scale
+        rect.size.width*=self.scale
+        rect.size.height*=self.scale
+        
+        let imageRef = self.cgImage!.cropping(to: rect)
+        let image = UIImage(cgImage: imageRef!, scale: self.scale, orientation: self.imageOrientation)
+        return image
+    }
+    
+ 
+}
+
+
+

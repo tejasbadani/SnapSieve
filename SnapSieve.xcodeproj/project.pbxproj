@@ -23,7 +23,10 @@
 		9681A6AD201A6438001D26E4 /* IntroductionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9681A6AC201A6438001D26E4 /* IntroductionManager.swift */; };
 		9681A6B2201A661C001D26E4 /* IntroVC3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9681A6B1201A661C001D26E4 /* IntroVC3.swift */; };
 		9681A6B4201A6627001D26E4 /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9681A6B3201A6627001D26E4 /* LoginVC.swift */; };
+		96ACA615203C8F66003081E7 /* Internet Access.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ACA614203C8F66003081E7 /* Internet Access.swift */; };
 		96B44609201BC1DD00FCABA8 /* VoteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96B44608201BC1DD00FCABA8 /* VoteVC.swift */; };
+		96DD2D1020382399009912EB /* ShadowImage_ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96DD2D0F20382399009912EB /* ShadowImage_ProfileVC.swift */; };
+		96E530632039306F006AB589 /* TermsAndCondtionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E530622039306F006AB589 /* TermsAndCondtionsViewController.swift */; };
 		96EBD32A20260B0000F38202 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EBD32920260B0000F38202 /* Post.swift */; };
 		96EBD33D202638B000F38202 /* GFBase32Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EBD332202638B000F38202 /* GFBase32Utils.m */; };
 		96EBD33E202638B000F38202 /* GeoFire.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EBD334202638B000F38202 /* GeoFire.m */; };
@@ -56,7 +59,10 @@
 		9681A6AC201A6438001D26E4 /* IntroductionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroductionManager.swift; sourceTree = "<group>"; };
 		9681A6B1201A661C001D26E4 /* IntroVC3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroVC3.swift; sourceTree = "<group>"; };
 		9681A6B3201A6627001D26E4 /* LoginVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
+		96ACA614203C8F66003081E7 /* Internet Access.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Internet Access.swift"; sourceTree = "<group>"; };
 		96B44608201BC1DD00FCABA8 /* VoteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteVC.swift; sourceTree = "<group>"; };
+		96DD2D0F20382399009912EB /* ShadowImage_ProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowImage_ProfileVC.swift; sourceTree = "<group>"; };
+		96E530622039306F006AB589 /* TermsAndCondtionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndCondtionsViewController.swift; sourceTree = "<group>"; };
 		96EBD32920260B0000F38202 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		96EBD32C202638B000F38202 /* GeoFire-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GeoFire-Prefix.pch"; sourceTree = "<group>"; };
 		96EBD32E202638B000F38202 /* GFBase32Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFBase32Utils.h; sourceTree = "<group>"; };
@@ -152,6 +158,7 @@
 			children = (
 				96EBD32920260B0000F38202 /* Post.swift */,
 				961B8C292033F5980048FFC5 /* User.swift */,
+				96ACA614203C8F66003081E7 /* Internet Access.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -162,6 +169,7 @@
 				9622547D201E193F00F556F1 /* ProfileVCCell.swift */,
 				963BD49F2022222A00549A9A /* ViewBackground.swift */,
 				9606C27E2024379E0035E51A /* ShadowImage.swift */,
+				96DD2D0F20382399009912EB /* ShadowImage_ProfileVC.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -175,6 +183,7 @@
 				96B44608201BC1DD00FCABA8 /* VoteVC.swift */,
 				9622547B201E188C00F556F1 /* ProfileVC.swift */,
 				963BD4A12022230A00549A9A /* UploadImagesVC.swift */,
+				96E530622039306F006AB589 /* TermsAndCondtionsViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -357,8 +366,9 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-SnapSieve/Pods-SnapSieve-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
-				"${BUILT_PRODUCTS_DIR}/BulletinBoard/BulletinBoard.framework",
+				"${BUILT_PRODUCTS_DIR}/CropViewController/CropViewController.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKLoginKit/FBSDKLoginKit.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMOAuth2/GTMOAuth2.framework",
@@ -371,7 +381,6 @@
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework",
 				"${BUILT_PRODUCTS_DIR}/UICircularProgressRing/UICircularProgressRing.framework",
-				"${BUILT_PRODUCTS_DIR}/UIImageCropper/UIImageCropper.framework",
 				"${BUILT_PRODUCTS_DIR}/ZAlertView/ZAlertView.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
@@ -379,8 +388,9 @@
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BulletinBoard.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CropViewController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKLoginKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMOAuth2.framework",
@@ -393,7 +403,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftKeychainWrapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UICircularProgressRing.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UIImageCropper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZAlertView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
@@ -415,6 +424,7 @@
 				9606C27F2024379E0035E51A /* ShadowImage.swift in Sources */,
 				9681A69B201A106D001D26E4 /* AppDelegate.swift in Sources */,
 				96B44609201BC1DD00FCABA8 /* VoteVC.swift in Sources */,
+				96ACA615203C8F66003081E7 /* Internet Access.swift in Sources */,
 				96EBD32A20260B0000F38202 /* Post.swift in Sources */,
 				960F88A3201F4CDB006D8326 /* DataServices.swift in Sources */,
 				9622547C201E188D00F556F1 /* ProfileVC.swift in Sources */,
@@ -423,6 +433,7 @@
 				9681A6B4201A6627001D26E4 /* LoginVC.swift in Sources */,
 				963BD4A420224C3300549A9A /* PHAssetToImage.swift in Sources */,
 				96EBD341202638B000F38202 /* GFGeoHash.m in Sources */,
+				96E530632039306F006AB589 /* TermsAndCondtionsViewController.swift in Sources */,
 				9622547E201E193F00F556F1 /* ProfileVCCell.swift in Sources */,
 				96FA1F8B202E13040062737F /* KolodaOverlay.swift in Sources */,
 				96EBD340202638B000F38202 /* GFQuery.m in Sources */,
@@ -431,6 +442,7 @@
 				96EBD33F202638B000F38202 /* GFGeoHashQuery.m in Sources */,
 				963BD4A22022230A00549A9A /* UploadImagesVC.swift in Sources */,
 				96EBD33E202638B000F38202 /* GeoFire.m in Sources */,
+				96DD2D1020382399009912EB /* ShadowImage_ProfileVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -572,12 +584,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 34CBZSFQS5;
 				INFOPLIST_FILE = SnapSieve/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Tejas.SnapSieve;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SnapSieve/SnapSieve-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -590,12 +603,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 34CBZSFQS5;
 				INFOPLIST_FILE = SnapSieve/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Tejas.SnapSieve;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SnapSieve/SnapSieve-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

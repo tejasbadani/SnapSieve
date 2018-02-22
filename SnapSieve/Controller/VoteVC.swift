@@ -20,12 +20,8 @@ import FirebaseStorage
 import UICircularProgressRing
 import NVActivityIndicatorView
 import SVProgressHUD
-import BulletinBoard
 import ZAlertView
 class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelegate {
-   
-
-  //: TODO Show the camera button only if the votes are greater than 5 Or show an alert if its less than 5
 
     @IBOutlet weak var circularRing2: UICircularProgressRingView!
     @IBOutlet weak var circularRing1: UICircularProgressRingView!
@@ -56,6 +52,8 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
     var resultPostID = [String]()
     var shuffled = [Any]()
     var posts = [Post]()
+    var imageDictionary1 : Dictionary<Int,UIImage> = [:]
+    var imageDictionary2 : Dictionary<Int,UIImage> = [:]
     @IBOutlet weak var actionSheetButton: UIButton!
     @IBOutlet weak var profileButton: UIButton!
     @IBOutlet weak var cameraButton: UIButton!
@@ -71,14 +69,7 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
     var imageArray1 = [UIImage]()
     var imageArray2 = [UIImage]()
     var isGoingToNextCard : Bool = false
-    var didComeFromSwipe : Bool = false
-    lazy var bulletinManager: BulletinManager = {
-        let page = PageBulletinItem(title: "Location Services")
-        page.image = #imageLiteral(resourceName: "location")
-        page.descriptionText = "Enable location services to continue using the app!"
-        page.actionButtonTitle = "Go to settings"
-        return BulletinManager(rootItem: page)
-    }()
+    var didFinishRetrievingInfo : Bool = false
     
     override func viewDidLayoutSubviews() {
         isViewShown = false
@@ -93,6 +84,7 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
         self.containerView.frame = CGRect(x: xPostion, y: yPostion + 85, width: width, height: height)
         self.arrowImageView.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi))
     }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -112,9 +104,27 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
         let gestureRecogniser = UISwipeGestureRecognizer(target: self, action: #selector(animateUIView))
         gestureRecogniser.direction = .up
         self.toBeSwipedView.addGestureRecognizer(gestureRecogniser)
-        retrieveUserData()
-        determineCurrentLocation()
+        checkConnection()
         
+        
+    }
+    
+    func checkConnection(){
+        if Connectivity.isConnectedToInternet(){
+            retrieveUserData()
+            determineCurrentLocation()
+        }else{
+            let dialog = ZAlertView(title: "Oops",
+                                    message: "You don't seem to have an active internet connection.",
+                                    closeButtonText: "Retry",
+                                    closeButtonHandler: { alertView in
+                                        self.checkConnection()
+                                        alertView.dismissAlertView()
+            }
+            )
+            dialog.allowTouchOutsideToDismiss = false
+            dialog.show()
+        }
     }
     
     func retrieveUserData(){
@@ -135,12 +145,17 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
             
             if let noOfPosts = snapshot.childSnapshot(forPath: "remainingPosts").value{
                 if noOfPosts is NSNull{
+                    self.didFinishRetrievingInfo = true
                     User.u.remainingPosts = 1
                 }else{
+                    self.didFinishRetrievingInfo = true
                     User.u.remainingPosts = noOfPosts as! Int
+                    
+                    self.adjustScore()
                 }
                 
             }else{
+                self.didFinishRetrievingInfo = true
                 User.u.remainingPosts = 0
             }
             
@@ -151,34 +166,55 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
-        if CLLocationManager.locationServicesEnabled() {
-            locationManager.startUpdatingLocation()
-           
-            SVProgressHUD.setBackgroundColor(UIColor.lightGray)
-            SVProgressHUD.show()
-    
-            checkData(completionHandler: { (success) in
-                self.getResultPostID(completionHandler: { (check) in
-                    self.generateRandomElements(completionHandler: { (check) in
-                        self.downloadPostData(completionHandler: { (test) in
-                            self.settingUpKoloda()
+        
+        if Connectivity.isConnectedToInternet(){
+            if CLLocationManager.locationServicesEnabled() {
+                locationManager.startUpdatingLocation()
+                
+                self.kolodaView1.isUserInteractionEnabled = false
+                self.kolodaView2.isUserInteractionEnabled = false
+                
+                
+                SVProgressHUD.setBackgroundColor(UIColor.lightGray)
+                SVProgressHUD.show()
+                
+                
+                
+                checkData(completionHandler: { (success) in
+                    self.getResultPostID(completionHandler: { (check) in
+                        self.generateRandomElements(completionHandler: { (check) in
+                            self.downloadPostData(completionHandler: { (test) in
+                                self.settingUpKoloda()
+                            })
                         })
                     })
                 })
-            })
+            }else{
+                let dialog = ZAlertView(title: "Sorry",
+                                        message: "You don't seem to have your location services enabled. Enable location services in settings to use the app.",
+                                        closeButtonText: "Retry",
+                                        closeButtonHandler: { alertView in
+                                            self.determineCurrentLocation()
+                                            alertView.dismissAlertView()
+                }
+                )
+                dialog.allowTouchOutsideToDismiss = false
+                dialog.show()
+                
+            }
         }else{
-            let dialog = ZAlertView(title: "Sorry",
-                                    message: "You don't seem to have your location services enabled. Enable location services in settings to use the app.",
+            let dialog = ZAlertView(title: "Oops",
+                                    message: "You don't seem to have an active internet connection.",
                                     closeButtonText: "Retry",
                                     closeButtonHandler: { alertView in
-                                        self.determineCurrentLocation()
+                                        self.checkConnection()
                                         alertView.dismissAlertView()
             }
             )
             dialog.allowTouchOutsideToDismiss = false
             dialog.show()
-            
         }
+        
     }
     func checkData(completionHandler: @escaping arrayClosure){
         
@@ -197,29 +233,35 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
         }
         DataServices.ds.REF_POSTS.observe(.value) { (snapshot) in
             
-            var dwi3 : DispatchWorkItem!
-            
-            for snap in snapshot.children{
-                let userSnap = snap as! DataSnapshot
-                let geoFir = GeoFire(firebaseRef: DataServices.ds.REF_POSTS.child(userSnap.key))
-                let circle = geoFir.query(at: self.locationManager.location!,withRadius:100)
-                dwi3 = DispatchWorkItem {
-                    circle.observe(.keyEntered, with: { (str, location) in
-                        self.allPostsID.append(str)
-                    })
-                    sleep(2)
+                var dwi3 : DispatchWorkItem!
+            if snapshot.exists(){
+                for snap in snapshot.children{
+                    let userSnap = snap as! DataSnapshot
+                    let geoFir = GeoFire(firebaseRef: DataServices.ds.REF_POSTS.child(userSnap.key))
+                    let circle = geoFir.query(at: self.locationManager.location!,withRadius:100)
+                    dwi3 = DispatchWorkItem {
+                        circle.observe(.keyEntered, with: { (str, location) in
+                            self.allPostsID.append(str)
+                        })
+                        sleep(2)
+                    }
+                    DispatchQueue.global().async(execute: dwi3)
                 }
-                DispatchQueue.global().async(execute: dwi3)
-            }
-            let myDq = DispatchQueue(label: "A custom dispatch queue")
-            dwi3.notify(queue: myDq) {
-                DataServices.ds.REF_CURRENT_USER.child("votedPosts").removeAllObservers()
-                DataServices.ds.REF_POSTS.removeAllObservers()
+                let myDq = DispatchQueue(label: "A custom dispatch queue")
+                dwi3.notify(queue: myDq) {
+                    DataServices.ds.REF_CURRENT_USER.child("votedPosts").removeAllObservers()
+                    DataServices.ds.REF_POSTS.removeAllObservers()
+                    completionHandler(true)
+                }
+            }else{
+                print("EXE")
                 completionHandler(true)
             }
+            
         }
+            }
         
-    }
+    
     
     func getResultPostID(completionHandler: @escaping resultArrayClosure){
         resultPostID = []
@@ -240,6 +282,7 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
         imageArray1 = []
         imageArray2 = []
         var dwi3 : DispatchWorkItem!
+        if shuffled.count>0{
         for postID in shuffled{
             dwi3 = DispatchWorkItem{
                 DataServices.ds.REF_POSTS.child(postID as! String).observe(.value, with: { (snapshot) in
@@ -249,28 +292,50 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
                         var URL2 : String!
                         var votes1: Float!
                         var votes2: Float!
-                        
+                        var userNameFinal : String!
                         if let image1 = postDict["image1"] as? Dictionary<String,AnyObject> {
                             if let URL = image1["URL"]{
                                 print(URL)
                                 URL1 = URL as! String
+                            }else{
+                                URL1 = "gs://snapsieve.appspot.com/post-pics/Error.png"
                             }
                             if let votes = image1["votes"]{
                                 print(votes)
                                 votes1 = votes as! Float
+                            }else{
+                                votes1 = 0
                             }
+                        }else{
+                            print("EXECUTED A")
+                            URL1 = "gs://snapsieve.appspot.com/post-pics/Error.png"
+                            votes1 = 0
                         }
                         if let image2 = postDict["image2"] as? Dictionary<String,AnyObject> {
                             if let URL = image2["URL"]{
                                 print(URL)
                                 URL2 = URL as! String
+                            }else{
+                                URL2 = "gs://snapsieve.appspot.com/post-pics/Error.png"
                             }
                             if let votes = image2["votes"]{
                                 print(votes)
                                 votes2 = votes as! Float
+                            }else{
+                                votes2 = 0
                             }
+                        }else{
+                            print("EXECUTED B")
+                            URL2 = "gs://snapsieve.appspot.com/post-pics/Error.png"
+                            votes2 = 0
                         }
-                        let postObject = Post(img1URL: URL1, img2URL: URL2, votes1: votes1, votes2: votes2 , postID : postID as! String)
+                        if let userName = postDict["name"] as? String{
+                            userNameFinal = userName
+                        }else{
+                            userNameFinal = "Unknown"
+                        }
+                        
+                        let postObject = Post(img1URL: URL1, img2URL: URL2, votes1: votes1, votes2: votes2 , postID : postID as! String , username : userNameFinal)
                         self.posts.append(postObject)
                         //group.leave()
                     }
@@ -280,21 +345,26 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
             DispatchQueue.global().async(execute: dwi3)
             //DataServices.ds.REF_POSTS.child(postID as! String).removeAllObservers()
         }
-        
-            let myDq = DispatchQueue(label: "A custom dispatch queue")
-            dwi3.notify(queue: myDq) {
-                for postID in self.shuffled{
-                    DataServices.ds.REF_POSTS.child(postID as! String).removeAllObservers()
-                }
-                
-                completionHandler(true)
+        let myDq = DispatchQueue(label: "A custom dispatch queue")
+        dwi3.notify(queue: myDq) {
+            for postID in self.shuffled{
+                DataServices.ds.REF_POSTS.child(postID as! String).removeAllObservers()
             }
+            
+            completionHandler(true)
+            }
+            
+        }else{
+            completionHandler(true)
+        }
+        
         
     }
     func settingUpKoloda(){
         let grp = DispatchGroup()
         if posts.count > 5{
             for index in 0...4{
+                
                 grp.enter()
                 grp.enter()
                 print("Executing loop")
@@ -304,12 +374,14 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
                     //grp.enter()
                     if error != nil{
                         print("Unable to download image")
+                        grp.leave()
                     }else{
-                        
+                        print("INDEX 1 : \(index)")
                         print("Image Downloaded from storage")
                         if let imageData = data{
                             if let img = UIImage(data: imageData){
-                                self.imageArray1.append(img)
+                                //let dict = [img : index]
+                                self.imageDictionary1.updateValue(img, forKey: index)
                                 grp.leave()
                             }
                         }
@@ -322,11 +394,14 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
                     //grp.enter()
                     if error != nil{
                         print("Unable to download image")
+                        grp.leave()
                     }else{
+                        print("INDEX 2 : \(index)")
                         print("Image Downloaded from storage")
                         if let imageData = data{
                             if let img = UIImage(data: imageData){
-                                self.imageArray2.append(img)
+                                //let dict = [img : index]
+                                self.imageDictionary2.updateValue(img, forKey: index)
                                 grp.leave()
                             }
                         }
@@ -334,7 +409,7 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
                 })
             }
         }else{
-            for po in posts{
+            for (index,po) in posts.enumerated(){
                 grp.enter()
                 grp.enter()
                 
@@ -344,13 +419,16 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
                 ref1.getData(maxSize : 2 * 1024 * 1024, completion : {(data,error) in
                     //grp.enter()
                     if error != nil{
+                        print(po.postID)
                         print("Unable to download image")
+                        grp.leave()
                     }else{
-                        
+                        print("INDEX 1 : \(po.postID)")
                         print("Image Downloaded from storage")
                         if let imageData = data{
                             if let img = UIImage(data: imageData){
-                                self.imageArray1.append(img)
+                                //let dict = [img : index]
+                                self.imageDictionary1.updateValue(img, forKey: index)
                                 grp.leave()
                             }
                         }
@@ -361,12 +439,16 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
                 ref2.getData(maxSize : 2 * 1024 * 1024, completion : {(data,error) in
                     //grp.enter()
                     if error != nil{
+                        print(po.postID)
                         print("Unable to download image")
+                        grp.leave()
                     }else{
+                        print("INDEX 2 : \(po.postID)")
                         print("Image Downloaded from storage")
                         if let imageData = data{
                             if let img = UIImage(data: imageData){
-                                self.imageArray2.append(img)
+                                //let dict = [img : index]
+                                self.imageDictionary2.updateValue(img, forKey: index)
                                 grp.leave()
                             }
                         }
@@ -377,9 +459,17 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
         
         grp.notify(queue: .main) {
             print("POST ::: \(self.posts)")
+            print("IS THIS EXECUTED?")
             SVProgressHUD.dismiss()
             
             if (self.posts.count > 0 ){
+                print("POST ID \(self.posts[0].postID)")
+                print("POST URL 1 \(self.posts[0].image1URL)")
+                print("POST URL 2 \(self.posts[0].image2URL)")
+                self.kolodaView1.countOfVisibleCards = 1
+                self.kolodaView2.countOfVisibleCards = 1
+                self.kolodaView1.isUserInteractionEnabled = true
+                self.kolodaView2.isUserInteractionEnabled = true
                 self.kolodaView1.dataSource = self
                 self.kolodaView1.delegate = self
                 self.kolodaView2.dataSource = self
@@ -393,9 +483,15 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
                                         okButtonText: "Upload Photo",
                                         cancelButtonText: "Retry",
                                         okButtonHandler: { (alertView) -> () in
+                                            
                                             alertView.dismissAlertView()
-                                            //self.performSegue(withIdentifier: "ProfileVC", sender: nil)
-                                            //TODO Upload photo
+                                            
+                                            Config.tabsToShow = [.imageTab]
+                                            Config.Camera.imageLimit = 2
+                                            let gallery = GalleryController()
+                                            gallery.delegate = self
+                                            self.present(gallery, animated: true, completion: nil)
+                                            
                 },
                                         cancelButtonHandler: { (alertView) -> () in
                                             
@@ -425,37 +521,59 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
         print("Error \(error)")
     }
   
+    @IBAction func reloadData(_ sender: Any) {
+        self.determineCurrentLocation()
+    }
     @IBAction func actionSheetClicked(_ sender: Any) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let firstAction = UIAlertAction(title: "Report Post", style: .destructive) { (alert) in
-            let dialog = ZAlertView(title: "Report Post",
-                                    message: "Are you sure you want to report the post?",
-                                    isOkButtonLeft: true,
-                                    okButtonText: "Yes",
-                                    cancelButtonText: "No",
-                                    okButtonHandler: { (alertView) -> () in
-                                        //Handle the report action
-                                        let dict = [self.posts[self.kolodaView1.currentCardIndex].postID : true]
-                                        DataServices.ds.REF_REPORTS.updateChildValues(dict)
-                                        alertView.dismissAlertView()
-                                        //TODO
-                                        let dialog2 = ZAlertView(title: "Success",
-                                                                message: "The Post has been reported successfully. Thank you for your cooperation.",
-                                                                closeButtonText: "Okay",
-                                                                closeButtonHandler: { alertView in
-                                                                    alertView.dismissAlertView()
-                                        }
-                                        )
-                                        dialog2.allowTouchOutsideToDismiss = true
-                                        dialog2.show()
-                                        
-            },
-                                    cancelButtonHandler: { (alertView) -> () in
-                                        alertView.dismissAlertView()
+            
+            if (self.posts.count)>0{
+                let dialog = ZAlertView(title: "Report Post",
+                                        message: "Are you sure you want to report the post?",
+                                        isOkButtonLeft: true,
+                                        okButtonText: "Yes",
+                                        cancelButtonText: "No",
+                                        okButtonHandler: { (alertView) -> () in
+                                            //Handle the report action
+                                            let dict = [self.posts[self.kolodaView1.currentCardIndex].postID : true]
+                                            DataServices.ds.REF_REPORTS.updateChildValues(dict)
+                                            DataServices.ds.REF_CURRENT_USER.child("votedPosts").updateChildValues(dict)
+                                            alertView.dismissAlertView()
+                                            
+                                            
+                                            let dialog2 = ZAlertView(title: "Success",
+                                                                     message: "The Post has been reported successfully. Thank you for your cooperation.",
+                                                                     closeButtonText: "Okay",
+                                                                     closeButtonHandler: { alertView in
+                                                                        alertView.dismissAlertView()
+                                                                        self.determineCurrentLocation()
+                                                                        
+                                                                        
+                                            }
+                                            )
+                                            dialog2.allowTouchOutsideToDismiss = false
+                                            dialog2.show()
+                                            
+                },
+                                        cancelButtonHandler: { (alertView) -> () in
+                                            alertView.dismissAlertView()
+                }
+                )
+                dialog.show()
+                dialog.allowTouchOutsideToDismiss = true
+            }else{
+                let dialog = ZAlertView(title: "Oops!",
+                                        message: "There isnt a post you can report! ",
+                                        closeButtonText: "Okay",
+                                        closeButtonHandler: { alertView in
+                                            alertView.dismissAlertView()
+                }
+                )
+                dialog.allowTouchOutsideToDismiss = true
+                dialog.show()
             }
-            )
-            dialog.show()
-            dialog.allowTouchOutsideToDismiss = true
+           
         }
         let secondAction = UIAlertAction(title: "Log Out", style: .destructive) { (alert) in
             try! Auth.auth().signOut()
@@ -476,6 +594,13 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
         self.cameraButton.isHidden = hide
         self.profileButton.isHidden = hide
         self.actionSheetButton.isHidden = hide
+    }
+    func adjustScore(){
+        if User.u.remainingPosts < 0{
+            self.scoreCounter.text = "\(User.u.votes!)/\((-User.u.remainingPosts * 5) + 5)"
+        }else {
+            self.scoreCounter.text = "\(User.u.votes!)/5"
+        }
     }
     @objc func animateUIView(gestureRecogniser : UISwipeGestureRecognizer){
         
@@ -519,6 +644,7 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
         
     }
     func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
+        imagesE = []
         if images.count == 2{
             // imagesE = images
             let asset = images[0].asset
@@ -533,10 +659,20 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
             dismiss(animated: true, completion: {
                 self.performSegue(withIdentifier: "Camera", sender: nil)
                 
+                
             })
             
         }else if images.count == 0 || images.count == 1{
             //Alert View saying you have to choose two images
+            let dialog = ZAlertView(title: "Oops",
+                                    message: "Seems like you haven't picked enough photos. Pick two photos!",
+                                    closeButtonText: "Okay",
+                                    closeButtonHandler: { alertView in
+                                        alertView.dismissAlertView()
+            }
+            )
+            dialog.allowTouchOutsideToDismiss = true
+            dialog.show()
         }
     }
     
@@ -554,16 +690,28 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
     }
     @IBAction func uploadPhoto(_ sender: Any) {
         
-        if (User.u.remainingPosts > 0){
-            Config.tabsToShow = [.imageTab, .cameraTab]
-            Config.Camera.imageLimit = 2
-            let gallery = GalleryController()
-            gallery.delegate = self
-            present(gallery, animated: true, completion: nil)
+        if didFinishRetrievingInfo == true{
+            if (User.u.remainingPosts > 0){
+                Config.tabsToShow = [.imageTab]
+                Config.Camera.imageLimit = 2
+                let gallery = GalleryController()
+                gallery.delegate = self
+                present(gallery, animated: true, completion: nil)
+            }else{
+                //Alert to tell user nope
+                let dialog = ZAlertView(title: "Oops",
+                                        message: "Seems like you haven't voted enough. Vote more to post!",
+                                        closeButtonText: "Okay",
+                                        closeButtonHandler: { alertView in
+                                            alertView.dismissAlertView()
+                }
+                )
+                dialog.allowTouchOutsideToDismiss = true
+                dialog.show()
+            }
         }else{
-            //Alert to tell user nope
-            let dialog = ZAlertView(title: "Oops",
-                                    message: "Seems like you haven't voted enough. Vote more to post!",
+            let dialog = ZAlertView(title: "One moment!",
+                                    message: "Loading your information...",
                                     closeButtonText: "Okay",
                                     closeButtonHandler: { alertView in
                                         alertView.dismissAlertView()
@@ -573,8 +721,10 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
             dialog.show()
         }
        
+       
         
     }
+    
     @IBAction func viewProfile(_ sender: Any) {
         //:TODO Go to the history of the user view
     }
@@ -593,13 +743,22 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
 extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
     func koloda(_ koloda: KolodaView, viewForCardAt index: Int) -> UIView {
         if (koloda == kolodaView1){
-            let im = UIImageView(image: imageArray1[index])
-            im.contentMode = .scaleAspectFit
+            var im: UIImageView!
+            if let _ = imageDictionary1[index] , let _ = imageDictionary2[index]{
+                 im = UIImageView(image: self.imageDictionary1[index])
+                im.contentMode = .scaleAspectFit
+                
+            }
             return im
             
         }else{
-            let im = UIImageView(image: imageArray2[index])
-            im.contentMode = .scaleAspectFit
+            var im: UIImageView!
+            if let _ = imageDictionary1[index] , let _ = imageDictionary2[index]{
+                
+                 im = UIImageView(image: self.imageDictionary2[index])
+                im.contentMode = .scaleAspectFit
+            }
+            
             return im
         }
         
@@ -628,7 +787,8 @@ extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
                     animateViewHidden(kolodaView: kolodaView1)
                     let totalVotes:Float = posts[index].votesImage1 + posts[index].votesImage2
                     animateCircularView(circularView: circularRing2, totalVotes: totalVotes, numeratorVotes: posts[index].votesImage2, viewOne: kolodaView2, viewTwo: kolodaView1)
-                self.scoreCounter.text = "\(User.u.votes!)/5"
+                self.adjustScore()
+                
                 
             }else{
                 
@@ -636,8 +796,8 @@ extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
                     animateViewHidden(kolodaView: kolodaView2)
                     let totalVotes:Float = posts[index].votesImage1 + posts[index].votesImage2
                     animateCircularView(circularView: circularRing1, totalVotes: totalVotes, numeratorVotes: posts[index].votesImage1, viewOne: kolodaView1, viewTwo: kolodaView2)
-                self.scoreCounter.text = "\(User.u.votes!)/5"
-                
+                //self.scoreCounter.text = "\(User.u.votes!)/5"
+                self.adjustScore()
                
             }
             
@@ -654,13 +814,13 @@ extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
         print("INDEX: \(index)")
         if (koloda == self.kolodaView1){
             posts[index].adjustVotes1()
-            //TODO
             isGoingToNextCard = true
             kolodaView2.swipe(.left)
             animateViewHidden(kolodaView: kolodaView2)
             let totalVotes:Float = posts[index].votesImage1 + posts[index].votesImage2
             animateCircularView(circularView: circularRing1, totalVotes: totalVotes, numeratorVotes: posts[index].votesImage1, viewOne: kolodaView1, viewTwo: kolodaView2)
-            self.scoreCounter.text = "\(User.u.votes!)/5"
+            //self.scoreCounter.text = "\(User.u.votes!)/5"
+            self.adjustScore()
 
         }else{
             posts[index].adjustVotes2()
@@ -669,7 +829,8 @@ extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
             animateViewHidden(kolodaView: kolodaView1)
             let totalVotes:Float = posts[index].votesImage1 + posts[index].votesImage2
             animateCircularView(circularView: circularRing2, totalVotes: totalVotes, numeratorVotes: posts[index].votesImage2, viewOne: kolodaView2, viewTwo: kolodaView1)
-            self.scoreCounter.text = "\(User.u.votes!)/5"
+            //self.scoreCounter.text = "\(User.u.votes!)/5"
+            self.adjustScore()
             
         }
     }
@@ -728,7 +889,7 @@ extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
     }
     
     func animateViewHidden(kolodaView : KolodaView){
-        UIView.animate(withDuration: 0.5, delay: 0.1, options: .curveEaseIn, animations: {
+        UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseIn, animations: {
             kolodaView.alpha = 0.0
         }, completion: nil)
         
@@ -743,4 +904,8 @@ extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
         }
       
     }
+    func koloda(_ koloda: KolodaView, allowedDirectionsForIndex index: Int) -> [SwipeResultDirection] {
+        return [.left,.right]
+    }
 }
+

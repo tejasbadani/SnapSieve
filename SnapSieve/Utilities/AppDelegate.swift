@@ -11,6 +11,7 @@ import Firebase
 import GoogleSignIn
 import FBSDKLoginKit
 import SwiftKeychainWrapper
+import SVProgressHUD
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
     var window: UIWindow?
@@ -26,9 +27,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
     @available(iOS 9.0, *)
     func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any])
         -> Bool {
-            return GIDSignIn.sharedInstance().handle(url,
+            var signedIn : Bool =  GIDSignIn.sharedInstance().handle(url,
                                                      sourceApplication:options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String,
                                                      annotation: [:])
+             signedIn = signedIn ? signedIn : FBSDKApplicationDelegate.sharedInstance().application(application, open: url, sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String, annotation: nil)
+            return signedIn
     }
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
         
@@ -42,23 +45,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
                                                        accessToken: authentication.accessToken)
         if let error = error {
             // ...
+            
             print("error \(error)")
             return
         }
-        firebaseAuth(credential: credential)
+        SVProgressHUD.setBackgroundColor(UIColor.lightGray)
+        SVProgressHUD.show()
+        
+        firebaseAuth(credential: credential , user : user)
         
         
     }
-    func firebaseAuth(credential : AuthCredential){
+    func firebaseAuth(credential : AuthCredential , user: GIDGoogleUser!){
+        
         Auth.auth().signIn(with: credential) { (user, error) in
             if(error != nil){
                 print("Could not authenticate")
             }else {
                 if let user = user {
+                    KeychainWrapper.standard.set(user.displayName!, forKey: KEY_NAME)
+                    let userData = ["provider":credential.provider , "name": user.displayName]
                     
-                    let userData = ["provider":credential.provider]
+                    self.completeSignIn(id: user.uid, userData: userData as! Dictionary<String, String>)
                     
-                    self.completeSignIn(id: user.uid, userData: userData)
                 }
             }
             
@@ -77,6 +86,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
     
     
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
+        
         return FBSDKApplicationDelegate.sharedInstance().application(application, open: url, sourceApplication : sourceApplication,annotation:annotation)
         
     }
@@ -104,6 +114,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
     func showLoginScreen(){
         let voteVC = UIStoryboard.getMainStoryboard().instantiateViewController(withIdentifier: "Vote") as! VoteVC
         UIApplication.shared.delegate!.window!!.rootViewController = voteVC
+        SVProgressHUD.dismiss()
     }
 
 

@@ -13,13 +13,16 @@ import GoogleSignIn
 import FBSDKLoginKit
 import SwiftKeychainWrapper
 import ZAlertView
+import SVProgressHUD
+import FBSDKCoreKit
+
 class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSignInUIDelegate {
   
-
     @IBOutlet weak var arrowImage: UIImageView!
     @IBOutlet weak var googleImage: UIImageView!
     @IBOutlet weak var facebookImage: UIImageView!
     @IBOutlet weak var upperView: UIView!
+    var name : String!
     var animations: [HeroDefaultAnimationType] = [
         .push(direction: .left),
         .pull(direction: .left),
@@ -34,12 +37,13 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
         .zoomOut,
         .none
     ]
+    typealias username = (Bool) -> Void
     override func viewDidLoad() {
         super.viewDidLoad()
         
         ZAlertView.positiveColor            = UIColor.color("#669999")
         ZAlertView.negativeColor            = UIColor.color("#CC3333")
-        ZAlertView.blurredBackground        = true
+        ZAlertView.blurredBackground        = false
         ZAlertView.showAnimation            = .bounceBottom
         ZAlertView.hideAnimation            = .bounceTop
         ZAlertView.initialSpringVelocity    = 0.9
@@ -67,25 +71,33 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
     
     @objc func transtionBack(){
         let introVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "Intro") as! IntroductionManager
-        introVC.heroModalAnimationType = animations[2]
-        hero_replaceViewController(with: introVC)
-        hero_dismissViewController()
+        introVC.hero.modalAnimationType = animations[2]
+        hero.replaceViewController(with: introVC)
+        hero.dismissViewController()
     }
     @objc func facebookLogin(gestureRecogniser : UITapGestureRecognizer){
         
             let faceBookLogin = FBSDKLoginManager()
+            faceBookLogin.logOut()
             faceBookLogin.logIn(withReadPermissions: ["email"], from: self) { (result, error) in
                 if error != nil{
                     print("Error occured")
+                    //print(error)
                     self.showAlert()
                 }else if result?.isCancelled == true{
                     print("User Cancelled login")
                    self.showAlert()
                 }else{
+                    SVProgressHUD.setBackgroundColor(UIColor.lightGray)
+                    SVProgressHUD.show()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
                         let credential = FacebookAuthProvider.credential(withAccessToken: FBSDKAccessToken.current().tokenString)
+//                        if let _ = FBSDKAccessToken.current(){
+//                            self.fetchUserProfile()
+//                        }
                         self.firebaseAuth(credential: credential, completionHandler: {(check) in
                             self.transition()
+                            SVProgressHUD.dismiss()
                             
                         })
                         
@@ -110,8 +122,8 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
     
     func transition(){
         let voteVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "Vote") as! VoteVC
-        voteVC.heroModalAnimationType = animations[3]
-        hero_replaceViewController(with: voteVC)
+        voteVC.hero.modalAnimationType = animations[3]
+        hero.replaceViewController(with: voteVC)
     }
     @objc func googleLogin(gestureRecogniser : UITapGestureRecognizer){
         GIDSignIn.sharedInstance().uiDelegate = self
@@ -127,10 +139,12 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
             }else {
                 if let user = user {
                     group.enter()
-                    let userData = ["provider":credential.provider]
-                     self.completeSignIn(id: user.uid, userData: userData)
-                   
-                    group.leave()
+                    self.fetchUserProfile(completionHandler: { (check) in
+                        let userData = ["provider":credential.provider , "name" : self.name]
+                        self.completeSignIn(id: user.uid, userData: userData as! Dictionary<String, String>)
+                        group.leave()
+                    })
+                    
                 }
             }
             group.notify(queue: .main, execute: {
@@ -150,6 +164,50 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
         
         
     }
+    func fetchUserProfile(completionHandler : @escaping username)
+    {
+        let grp = DispatchGroup()
+        let graphRequest : FBSDKGraphRequest = FBSDKGraphRequest(graphPath: "me", parameters: ["fields":"id, email, name"])
+        grp.enter()
+        graphRequest.start(completionHandler: { (connection, result, error) -> Void in
+            
+            if ((error) != nil)
+            {
+                //print("Error took place: \(error)")
+                grp.leave()
+            }
+            else
+            {
+                //TODO:Get name from the data
+                if let dict = result as? Dictionary<String,String>{
+                    if let name = dict["name"]{
+                        KeychainWrapper.standard.set(name, forKey: KEY_NAME)
+                        self.name = name
+                    }
+                }
+                grp.leave()
+                print("Print entire fetched result: \(result)")
+                
+            }
+            
+        })
+        grp.notify(queue: .main) {
+             completionHandler(true)
+        }
+      
+    }
+    
+//    func getFBUserInfo() {
+//        let request = FBSDKGraphRequest(graphPath: "me", parameters: ["fields":"email,name"], accessToken: AccessToken.current, httpMethod: .GET, apiVersion: FacebookCore.GraphAPIVersion.defaultVersion)
+//        request.start { (response, result) in
+//            switch result {
+//            case .success(let value):
+//                print(value.dictionaryValue)
+//            case .failed(let error):
+//                print(error)
+//            }
+//        }
+//    }
  
     
     

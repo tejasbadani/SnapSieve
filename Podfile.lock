@@ -1,11 +1,12 @@
 PODS:
+  - Alamofire (4.6.0)
   - Bolts (1.9.0):
     - Bolts/AppLinks (= 1.9.0)
     - Bolts/Tasks (= 1.9.0)
   - Bolts/AppLinks (1.9.0):
     - Bolts/Tasks
   - Bolts/Tasks (1.9.0)
-  - BulletinBoard (1.3.0)
+  - CropViewController (2.3.6)
   - FBSDKCoreKit (4.30.0):
     - Bolts (~> 1.7)
   - FBSDKLoginKit (4.30.0):
@@ -82,11 +83,11 @@ PODS:
   - SVProgressHUD (2.2.3)
   - SwiftKeychainWrapper (3.0.1)
   - UICircularProgressRing (1.8.0)
-  - UIImageCropper (1.1.0)
   - ZAlertView (1.0.4)
 
 DEPENDENCIES:
-  - BulletinBoard
+  - Alamofire (~> 4.6)
+  - CropViewController
   - FBSDKLoginKit
   - Firebase/Auth
   - Firebase/Core
@@ -100,12 +101,12 @@ DEPENDENCIES:
   - SVProgressHUD
   - SwiftKeychainWrapper (~> 3.0)
   - UICircularProgressRing
-  - UIImageCropper
   - ZAlertView
 
 SPEC CHECKSUMS:
+  Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
   Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
-  BulletinBoard: 23c9d98cac654fd484d76f2a0655669974e9bd9c
+  CropViewController: e6d4bd512d15a1709e9ddf71fe7d98ffd05dda0f
   FBSDKCoreKit: 7c4bba2877781a131ab5d54c0a78c405d4307b62
   FBSDKLoginKit: fe7a7e82373dc5daad92e1623219e86224ab1fb1
   Firebase: 7d3b8cd837ad9fcd391657734c0d56dab8e9a5a3
@@ -129,9 +130,8 @@ SPEC CHECKSUMS:
   SVProgressHUD: a5eaeff664a82dda89809c409ace40183ce91523
   SwiftKeychainWrapper: 38952a3636320ae61bad3513cadd870929de7a4a
   UICircularProgressRing: c37a16e6b71c92eb31824e773e881203ba669306
-  UIImageCropper: fa08d02ee15a3910b2882f487ba83bebe318a1c4
   ZAlertView: 59fffdb4e37a01df461835566d5101052b8af953
 
-PODFILE CHECKSUM: b676e32812b5315862d861e12e746481d12ee10f
+PODFILE CHECKSUM: 03b8a5c867af26589f83794b4471e0d153d95b62
 
 COCOAPODS: 1.3.1
