@@ -23,6 +23,7 @@ import SVProgressHUD
 import ZAlertView
 class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelegate {
 
+    @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var circularRing2: UICircularProgressRingView!
     @IBOutlet weak var circularRing1: UICircularProgressRingView!
     @IBOutlet weak var image2: ShadowImage!
@@ -84,11 +85,12 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
         self.containerView.frame = CGRect(x: xPostion, y: yPostion + 85, width: width, height: height)
         self.arrowImageView.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi))
     }
-
+  
+  
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+        //print("THE USERNAME IS \(DataServices.ds.CURRENT_USER_NAME)")
         print("USER IS ::: \(DataServices.ds.REF_CURRENT_USER)")
         ZAlertView.positiveColor            = UIColor.color("#669999")
         ZAlertView.negativeColor            = UIColor.color("#CC3333")
@@ -174,9 +176,12 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
                 self.kolodaView1.isUserInteractionEnabled = false
                 self.kolodaView2.isUserInteractionEnabled = false
                 
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) {
+                    SVProgressHUD.setBackgroundColor(UIColor.lightGray)
+                    SVProgressHUD.show()
+                    
+                }
                 
-                SVProgressHUD.setBackgroundColor(UIColor.lightGray)
-                SVProgressHUD.show()
                 
                 
                 
@@ -489,6 +494,7 @@ class VoteVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelega
                                             Config.tabsToShow = [.imageTab]
                                             Config.Camera.imageLimit = 2
                                             let gallery = GalleryController()
+                                            
                                             gallery.delegate = self
                                             self.present(gallery, animated: true, completion: nil)
                                             
@@ -749,6 +755,7 @@ extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
                 im.contentMode = .scaleAspectFit
                 
             }
+            self.userNameLabel.text = posts[index].userName
             return im
             
         }else{
@@ -771,12 +778,6 @@ extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
     func koloda(_ koloda: KolodaView, didSwipeCardAt index: Int, in direction: SwipeResultDirection) {
         print(koloda.countOfCards)
         
-        
-        
-//        if index == koloda.countOfCards-1  {
-//
-//            return
-//        }
         
         if !(isGoingToNextCard == true){
             
@@ -895,6 +896,8 @@ extension VoteVC: KolodaViewDelegate,KolodaViewDataSource{
         
     }
     func kolodaDidRunOutOfCards(_ koloda: KolodaView) {
+        
+       
         if kolodaView1 == koloda{
             DispatchQueue.main.asyncAfter(deadline: .now()+0.5, execute: {
                 

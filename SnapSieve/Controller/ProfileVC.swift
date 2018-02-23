@@ -280,9 +280,11 @@ class ProfileVC: UIViewController,UITableViewDelegate,UITableViewDataSource,Dele
             if let cell = tableView.dequeueReusableCell(withIdentifier: "UserPost") as? ProfileVCCell{
                 
                 if let image = ProfileVC.imageCache.object(forKey: currentPost.image1URL as NSString) , let image2 = ProfileVC.imageCache.object(forKey: currentPost.image2URL as NSString)  {
+                    
                     cell.configureCell(post: currentPost, image1: image , image2: image2)
                 }else{
-                    cell.configureCell(post: currentPost )
+                    
+                    cell.configureCell(post: currentPost)
                 }
                 cell.delegate = self
                 return cell

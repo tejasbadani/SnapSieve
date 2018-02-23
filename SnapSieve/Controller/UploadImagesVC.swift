@@ -76,6 +76,7 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
   
     
     override func viewWillAppear(_ animated: Bool) {
+        
         determineCurrentLocation()
     }
     func determineCurrentLocation(){
@@ -190,7 +191,7 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
         firebasePost2.updateChildValues(userID)
         let id = POST_REF.key
         let postID : Dictionary<String,AnyObject> = [id : true as AnyObject]
-        DataServices.ds.REF_POSTS.child(id).setValue(["name": DataServices.ds.CURRENT_USER_NAME])
+        DataServices.ds.REF_POSTS.child(id).child("name").setValue(DataServices.ds.CURRENT_USER_NAME)
         DataServices.ds.REF_POSTS.child(id).child("isVotingEnabled").setValue(true)
         DataServices.ds.REF_CURRENT_USER.child("posts").updateChildValues(postID)
         DataServices.ds.REF_CURRENT_USER.child("votedPosts").updateChildValues(postID)
@@ -234,13 +235,17 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
                 let asset = images[0].asset
                 if let img = convert.conversion(asset){
                     originalImage1 = img
-                    image1.image = img
+                    let im = cropImageToSquare(image: img)
+                    image1.image = im
+                    
                 }
             }else{
                 let asset = images[0].asset
                 if let img = convert.conversion(asset){
+                    
                     originalImage2 = img
-                    image2.image = img
+                    let im = cropImageToSquare(image: img)
+                    image2.image = im
                 }
             }
         }
@@ -256,7 +261,6 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
 //        cropper.cancelButtonText = "Cancel"
 //        self.present(cropper, animated: true, completion: nil)
 
-        
         
         let image: UIImage = originalImage1 //Load an image
         let cropViewController = CropViewController(image: image)
@@ -283,6 +287,7 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
     }
     func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
        
+        
             //let finalImage:CGImage = (image.cgImage?.cropping(to: cropRect))!
             //let croppedImage = UIImage(cgImage: finalImage)
             if checkString == "1"{

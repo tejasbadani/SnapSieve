@@ -108,6 +108,7 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
        
     }
     
+    
     func showAlert(){
         let dialog = ZAlertView(title: "Oops",
                                 message: "There seems to be a problem. Please try again.",
@@ -121,9 +122,10 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
     }
     
     func transition(){
-        let voteVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "Vote") as! VoteVC
-        voteVC.hero.modalAnimationType = animations[3]
-        hero.replaceViewController(with: voteVC)
+//        let voteVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "Vote") as! VoteVC
+//        voteVC.hero.modalAnimationType = animations[3]
+//        hero.replaceViewController(with: voteVC)
+        performSegue(withIdentifier: "facebook", sender: nil)
     }
     @objc func googleLogin(gestureRecogniser : UITapGestureRecognizer){
         GIDSignIn.sharedInstance().uiDelegate = self

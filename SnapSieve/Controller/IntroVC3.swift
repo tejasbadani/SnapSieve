@@ -43,8 +43,8 @@ class IntroVC3: UIViewController {
     @objc func transiton(){
         returnedFromLogin = true
         let loginVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "LoginVC") as! LoginVC
-        loginVC.heroModalAnimationType = animations[2]
-        hero_replaceViewController(with: loginVC)
+        loginVC.hero.modalAnimationType = animations[2]
+        hero.replaceViewController(with: loginVC)
     }
 
 

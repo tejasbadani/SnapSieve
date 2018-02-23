@@ -31,8 +31,8 @@ class ProfileVCCell: UITableViewCell {
         // Configure the view for the selected state
     }
     override func prepareForReuse() {
-        imageView1.image = UIImage()
-        imageView2.image = UIImage()
+       // imageView1.image = nil
+        //imageView2.image = nil
     }
     override func layoutSubviews() {
         contentView.frame = UIEdgeInsetsInsetRect(contentView.frame, UIEdgeInsetsMake(10, 10, 10, 10))
@@ -93,7 +93,7 @@ class ProfileVCCell: UITableViewCell {
                     print("Unable to download image")
                 }else{
                     
-                    print("Image Downloaded from storage")
+                    print("Image Downloaded from storage ----")
                     if let imageData = data{
                         if let img = UIImage(data: imageData){
                             ProfileVC.imageCache.setObject(img, forKey: post.image1URL as NSString)

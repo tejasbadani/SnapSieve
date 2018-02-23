@@ -288,24 +288,27 @@ Get your photo dilemma solved.</string>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zyb-bZ-sP5">
                                 <rect key="frame" x="0.0" y="305.5" width="375" height="6"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Question" translatesAutoresizingMaskIntoConstraints="NO" id="zSg-Ig-HUD">
-                                        <rect key="frame" x="170.5" y="-14" width="35" height="35"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zJR-5x-A5m">
+                                        <rect key="frame" x="188" y="-8" width="0.0" height="21"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="35" id="ERb-dh-Sj5"/>
-                                            <constraint firstAttribute="width" constant="35" id="Kdq-NF-ca2"/>
+                                            <constraint firstAttribute="height" constant="21" id="Guq-p1-bPM"/>
                                         </constraints>
-                                    </imageView>
+                                        <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="15"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" red="0.81176470588235294" green="0.81176470588235294" blue="0.81176470588235294" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="6" id="E49-ws-g18"/>
-                                    <constraint firstItem="zSg-Ig-HUD" firstAttribute="centerX" secondItem="zyb-bZ-sP5" secondAttribute="centerX" id="Gvl-ii-fms"/>
-                                    <constraint firstItem="zSg-Ig-HUD" firstAttribute="centerY" secondItem="zyb-bZ-sP5" secondAttribute="centerY" id="k1z-Pf-Xu4"/>
+                                    <constraint firstItem="zJR-5x-A5m" firstAttribute="centerX" secondItem="zyb-bZ-sP5" secondAttribute="centerX" id="FZT-iW-SK4"/>
+                                    <constraint firstItem="zJR-5x-A5m" firstAttribute="centerY" secondItem="zyb-bZ-sP5" secondAttribute="centerY" id="Tie-3B-JhS"/>
                                     <constraint firstAttribute="width" constant="375" id="l70-6Y-RaV"/>
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9aB-yF-F3H" customClass="UICircularProgressRingView" customModule="UICircularProgressRing">
-                                <rect key="frame" x="112.5" y="387" width="150" height="150"/>
+                                <rect key="frame" x="112.5" y="386.5" width="150" height="150"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="150" id="80h-16-S17"/>
@@ -319,7 +322,7 @@ Get your photo dilemma solved.</string>
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="H9X-Fk-uN7" customClass="UICircularProgressRingView" customModule="UICircularProgressRing">
-                                <rect key="frame" x="112.5" y="80" width="150" height="150"/>
+                                <rect key="frame" x="112.5" y="80.5" width="150" height="150"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="150" id="OYM-q4-OlE"/>
@@ -463,16 +466,16 @@ Get your photo dilemma solved.</string>
                             <constraint firstItem="Kak-ii-Ub0" firstAttribute="centerX" secondItem="0Ke-q6-UW8" secondAttribute="centerX" id="28N-eg-y0f"/>
                             <constraint firstItem="coN-u6-OD7" firstAttribute="bottom" secondItem="VmI-UV-0eP" secondAttribute="bottom" id="2gA-UR-pPw"/>
                             <constraint firstItem="9aB-yF-F3H" firstAttribute="centerY" secondItem="Kak-ii-Ub0" secondAttribute="centerY" id="3Cw-xE-BET"/>
-                            <constraint firstItem="Kak-ii-Ub0" firstAttribute="top" secondItem="zSg-Ig-HUD" secondAttribute="bottom" id="5Mz-QP-CZS"/>
                             <constraint firstItem="zyb-bZ-sP5" firstAttribute="centerX" secondItem="0Ke-q6-UW8" secondAttribute="centerX" id="8iT-rB-NXr"/>
+                            <constraint firstItem="1Q2-Hh-9Kv" firstAttribute="top" secondItem="zJR-5x-A5m" secondAttribute="bottom" constant="8" id="9QQ-2F-OkX"/>
                             <constraint firstItem="VmI-UV-0eP" firstAttribute="bottom" secondItem="Kak-ii-Ub0" secondAttribute="bottom" constant="70.5" id="I8P-Ty-wEO"/>
                             <constraint firstItem="dCb-Cn-2pj" firstAttribute="centerX" secondItem="0Ke-q6-UW8" secondAttribute="centerX" id="KDr-jC-eXG"/>
                             <constraint firstItem="Kak-ii-Ub0" firstAttribute="height" secondItem="dCb-Cn-2pj" secondAttribute="height" id="QMc-Pt-Ugs"/>
+                            <constraint firstItem="zJR-5x-A5m" firstAttribute="top" secondItem="oFC-pu-QQv" secondAttribute="bottom" constant="7.5" id="QWE-Zi-wJM"/>
                             <constraint firstItem="Kak-ii-Ub0" firstAttribute="width" secondItem="dCb-Cn-2pj" secondAttribute="width" id="Rx8-rm-eRq"/>
                             <constraint firstItem="dCb-Cn-2pj" firstAttribute="leading" secondItem="VmI-UV-0eP" secondAttribute="leading" constant="16" id="SkA-wr-3iZ"/>
                             <constraint firstItem="coN-u6-OD7" firstAttribute="leading" secondItem="VmI-UV-0eP" secondAttribute="leading" id="V39-kA-PB6"/>
                             <constraint firstItem="VmI-UV-0eP" firstAttribute="trailing" secondItem="dCb-Cn-2pj" secondAttribute="trailing" constant="16" id="VH1-dJ-c3l"/>
-                            <constraint firstItem="zSg-Ig-HUD" firstAttribute="top" secondItem="dCb-Cn-2pj" secondAttribute="bottom" constant="1.5" id="YB1-0p-rw8"/>
                             <constraint firstItem="H9X-Fk-uN7" firstAttribute="centerX" secondItem="dCb-Cn-2pj" secondAttribute="centerX" id="YdG-BU-pnt"/>
                             <constraint firstItem="H9X-Fk-uN7" firstAttribute="centerY" secondItem="dCb-Cn-2pj" secondAttribute="centerY" id="hQr-OU-vHU"/>
                             <constraint firstItem="coN-u6-OD7" firstAttribute="trailing" secondItem="VmI-UV-0eP" secondAttribute="trailing" id="i5v-H7-6RG"/>
@@ -495,6 +498,7 @@ Get your photo dilemma solved.</string>
                         <outlet property="profileButton" destination="CSX-yI-JXs" id="etv-Hq-mWg"/>
                         <outlet property="scoreCounter" destination="OqB-rt-L7G" id="xQr-Ib-heE"/>
                         <outlet property="toBeSwipedView" destination="KHS-Hb-Dqr" id="V9J-Qi-wRT"/>
+                        <outlet property="userNameLabel" destination="zJR-5x-A5m" id="LwV-u3-Jfc"/>
                         <outlet property="votedLabel" destination="47q-FE-eE8" id="gUG-0d-Viv"/>
                         <segue destination="xjt-Bn-0EZ" kind="show" identifier="Camera" id="emg-Hb-tSX"/>
                         <segue destination="YfK-cH-HB9" kind="show" identifier="return" id="h9Z-qI-9fm"/>
@@ -761,6 +765,7 @@ Get your photo dilemma solved.</string>
                         <outlet property="facebookImage" destination="Nmx-Nw-dEi" id="eab-Vr-see"/>
                         <outlet property="googleImage" destination="deZ-TA-br0" id="Wgi-Mb-2AZ"/>
                         <outlet property="upperView" destination="ilc-ga-JLv" id="dOz-mN-lzL"/>
+                        <segue destination="iaV-tz-VVD" kind="show" identifier="facebook" id="Jwi-pF-53X"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jnI-Ec-tR8" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1055,11 +1060,13 @@ If you have any questions about these Terms, please contact us.</string>
         <image name="Introduction - 2" width="291" height="192"/>
         <image name="Logo" width="341" height="154"/>
         <image name="PlaceholderImage" width="343" height="270"/>
-        <image name="Question" width="35" height="35"/>
         <image name="Upload 2" width="117" height="33"/>
         <image name="User" width="26" height="26"/>
         <image name="crop" width="26" height="26"/>
         <image name="dots" width="19" height="5"/>
         <image name="reload" width="32" height="32"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="Jwi-pF-53X"/>
+    </inferredMetricsTieBreakers>
 </document>
