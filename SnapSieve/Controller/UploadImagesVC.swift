@@ -121,6 +121,7 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
                     
                     if error != nil{
                         print("TEJ: Unable to upload image to firebase storage")
+                        group.leave()
                     }else{
                         
                         print("TEJ: Successfully uploaded image")
@@ -152,6 +153,7 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
                     
                     if error != nil{
                         print("TEJ: Unable to upload image to firebase storage")
+                        group.leave()
                     }else{
                         print("TEJ: Successfully uploaded image")
                         

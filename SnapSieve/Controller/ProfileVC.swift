@@ -11,6 +11,7 @@ import Firebase
 import FirebaseStorage
 import SVProgressHUD
 import ZAlertView
+import SDWebImage
 class ProfileVC: UIViewController,UITableViewDelegate,UITableViewDataSource,DeleteButtonProtocol{
     func didShowAlertView(index : Int) {
         //TODO - Show action sheet and delete the post
@@ -209,7 +210,7 @@ class ProfileVC: UIViewController,UITableViewDelegate,UITableViewDataSource,Dele
                             }else{
                                 print("EXECUTED B")
                                 URL1 = "gs://snapsieve.appspot.com/post-pics/Error.png"
-                                votes2 = 1
+                                votes1 = 0
                             }
                             if let image2 = postDict["image2"] as? Dictionary<String,AnyObject> {
                                 if let URL = image2["URL"]{
@@ -239,6 +240,7 @@ class ProfileVC: UIViewController,UITableViewDelegate,UITableViewDataSource,Dele
                             self.posts.append(postObject)
                             print(self.posts)
                             group.leave()
+                            DataServices.ds.REF_POSTS.child(key).removeAllObservers()
                         }
                     })
                 }
@@ -279,14 +281,41 @@ class ProfileVC: UIViewController,UITableViewDelegate,UITableViewDataSource,Dele
             let currentPost = posts[indexPath.row]
             if let cell = tableView.dequeueReusableCell(withIdentifier: "UserPost") as? ProfileVCCell{
                 
-                if let image = ProfileVC.imageCache.object(forKey: currentPost.image1URL as NSString) , let image2 = ProfileVC.imageCache.object(forKey: currentPost.image2URL as NSString)  {
-                    
-                    cell.configureCell(post: currentPost, image1: image , image2: image2)
-                }else{
-                    
-                    cell.configureCell(post: currentPost)
-                }
-                cell.delegate = self
+                let imageURL1 = currentPost.image1URL
+                let imageURL2 = currentPost.image2URL
+               // let url1 = NSURL(string: imageURL1)
+               // let url2 = NSURL(string: imageURL2)
+                let ref1 = Storage.storage().reference(forURL: imageURL1)
+                let ref2 = Storage.storage().reference(forURL: imageURL2)
+                //cell.imageView1.sd_setImage(with: ref1, placeholderImage: #imageLiteral(resourceName: "Temp"))
+                cell.configureCell(post: currentPost)
+                ref1.downloadURL(completion: { (url, error) in
+                    if let error = error{
+                        print("ERROR OCCURED")
+                    }else{
+                        cell.imageView1.sd_setImage(with: url, placeholderImage: #imageLiteral(resourceName: "PlaceholderImage"))
+                    }
+                })
+                ref2.downloadURL(completion: { (url, error) in
+                    if let error = error{
+                        print("ERROR OCCURED")
+                    }else{
+                        cell.imageView2.sd_setImage(with: url, placeholderImage: #imageLiteral(resourceName: "PlaceholderImage"))
+                    }
+                })
+                
+                //cell.imageView1.sd_setImageWithRe
+                
+//                if let image = ProfileVC.imageCache.object(forKey: currentPost.image1URL as NSString) , let image2 = ProfileVC.imageCache.object(forKey: currentPost.image2URL as NSString)  {
+//
+//                    cell.configureCell(post: currentPost, image1: image , image2: image2)
+//                }else{
+//
+//                    cell.configureCell(post: currentPost)
+//                }
+//                cell.delegate = self
+//                return cell
+                
                 return cell
             }else{
                 return ProfileVCCell()
@@ -300,6 +329,7 @@ class ProfileVC: UIViewController,UITableViewDelegate,UITableViewDataSource,Dele
     
    
     @IBAction func goBack(_ sender: Any) {
+        
        dismiss(animated: true, completion: nil)
     }
     

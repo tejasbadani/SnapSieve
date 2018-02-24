@@ -31,8 +31,8 @@ class ProfileVCCell: UITableViewCell {
         // Configure the view for the selected state
     }
     override func prepareForReuse() {
-       // imageView1.image = nil
-        //imageView2.image = nil
+        imageView1.image = nil
+        imageView2.image = nil
     }
     override func layoutSubviews() {
         contentView.frame = UIEdgeInsetsInsetRect(contentView.frame, UIEdgeInsetsMake(10, 10, 10, 10))
@@ -46,7 +46,7 @@ class ProfileVCCell: UITableViewCell {
         }
     }
     
-    func configureCell (post : Post ,image1 : UIImage? = nil , image2 : UIImage? = nil ){
+    func configureCell (post : Post  ){
         
         let sum = post.votesImage1 + post.votesImage2
         self.totalVotes.text = "Total Votes: \(sum)"
@@ -85,44 +85,44 @@ class ProfileVCCell: UITableViewCell {
         
         
        
-        if image1 == nil && image2 == nil{
-            let ref1 = Storage.storage().reference(forURL: post.image1URL)
-            ref1.getData(maxSize : 2 * 1024 * 1024, completion : {(data,error) in
-                //grp.enter()
-                if error != nil{
-                    print("Unable to download image")
-                }else{
-                    
-                    print("Image Downloaded from storage ----")
-                    if let imageData = data{
-                        if let img = UIImage(data: imageData){
-                            ProfileVC.imageCache.setObject(img, forKey: post.image1URL as NSString)
-                            self.imageView1.image = img
-                        }
-                    }
-                }
-            })
-            
-            
-            let ref2 = Storage.storage().reference(forURL: post.image2URL)
-            ref2.getData(maxSize : 2 * 1024 * 1024, completion : {(data,error) in
-                //grp.enter()
-                if error != nil{
-                    print("Unable to download image")
-                }else{
-                    print("Image Downloaded from storage")
-                    if let imageData = data{
-                        if let img = UIImage(data: imageData){
-                            ProfileVC.imageCache.setObject(img, forKey: post.image2URL as NSString)
-                            self.imageView2.image = img
-                        }
-                    }
-                }
-            })
-        }else{
-            self.imageView1.image = image1
-            self.imageView2.image = image2
-        }
+//        if image1 == nil && image2 == nil{
+//            let ref1 = Storage.storage().reference(forURL: post.image1URL)
+//            ref1.getData(maxSize : 2 * 1024 * 1024, completion : {(data,error) in
+//                //grp.enter()
+//                if error != nil{
+//                    print("Unable to download image")
+//                }else{
+//
+//                    print("Image Downloaded from storage ----")
+//                    if let imageData = data{
+//                        if let img = UIImage(data: imageData){
+//                            ProfileVC.imageCache.setObject(img, forKey: post.image1URL as NSString)
+//                            self.imageView1.image = img
+//                        }
+//                    }
+//                }
+//            })
+//
+//
+//            let ref2 = Storage.storage().reference(forURL: post.image2URL)
+//            ref2.getData(maxSize : 2 * 1024 * 1024, completion : {(data,error) in
+//                //grp.enter()
+//                if error != nil{
+//                    print("Unable to download image")
+//                }else{
+//                    print("Image Downloaded from storage")
+//                    if let imageData = data{
+//                        if let img = UIImage(data: imageData){
+//                            ProfileVC.imageCache.setObject(img, forKey: post.image2URL as NSString)
+//                            self.imageView2.image = img
+//                        }
+//                    }
+//                }
+//            })
+//        }else{
+//            self.imageView1.image = image1
+//            self.imageView2.image = image2
+//        }
      
         
     }
