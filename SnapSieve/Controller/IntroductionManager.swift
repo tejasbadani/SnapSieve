@@ -8,6 +8,7 @@
 
 import UIKit
 import SwiftKeychainWrapper
+import SVProgressHUD
 var returnedFromLogin : Bool = false
 import CoreLocation
 class IntroductionManager: UIPageViewController,UIPageViewControllerDataSource,UIPageViewControllerDelegate,CLLocationManagerDelegate {
@@ -35,7 +36,7 @@ class IntroductionManager: UIPageViewController,UIPageViewControllerDataSource,U
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+        SVProgressHUD.dismiss()
         self.dataSource = self
         self.delegate   = self
         

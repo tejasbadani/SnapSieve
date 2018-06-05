@@ -12,6 +12,8 @@ import GoogleSignIn
 import FBSDKLoginKit
 import SwiftKeychainWrapper
 import SVProgressHUD
+import Fabric
+import UserNotifications
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
     var window: UIWindow?
@@ -21,6 +23,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
         FirebaseApp.configure()
         GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
         GIDSignIn.sharedInstance().delegate = self
+        Fabric.sharedSDK().debug = true
+        
+        
+        // iOS 10 support
+         if #available(iOS 10, *) {
+            UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .alert, .sound]){ (granted, error) in }
+            application.registerForRemoteNotifications()
+        }
+            // iOS 9 support
+        else if #available(iOS 9, *) {
+            UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.badge, .sound, .alert], categories: nil))
+            UIApplication.shared.registerForRemoteNotifications()
+        }
+            // iOS 8 support
+        else if #available(iOS 8, *) {
+            UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.badge, .sound, .alert], categories: nil))
+            UIApplication.shared.registerForRemoteNotifications()
+        }
+            // iOS 7 support
+        else {
+            application.registerForRemoteNotifications(matching: [.badge, .sound, .alert])
+        }
         
         return true
     }
@@ -33,6 +57,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
              signedIn = signedIn ? signedIn : FBSDKApplicationDelegate.sharedInstance().application(application, open: url, sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String, annotation: nil)
             return signedIn
     }
+    
+    // Called when APNs has assigned the device a unique token
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        // Convert token to string
+        let deviceTokenString = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})
+        
+        // Print it to console
+        print("APNs device token: \(deviceTokenString)")
+        
+        // Persist it in your backend in case it's new
+    }
+    
+    // Called when APNs failed to register the device for push notifications
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        // Print the error to console (you should alert the user that registration failed)
+        print("APNs registration failed: \(error)")
+    }
+    
+    // Push notification received
+    func application(_ application: UIApplication, didReceiveRemoteNotification data: [AnyHashable : Any]) {
+        // Print notification payload data
+        print("Push notification received: \(data)")
+    }
+    
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
         
         if let error = error {
@@ -63,9 +111,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
                 print("Could not authenticate")
             }else {
                 if let user = user {
+                    let abc = user.photoURL?.absoluteString
+                    print("\n URL FOR PHOTO \(abc)")
                     KeychainWrapper.standard.set(user.displayName!, forKey: KEY_NAME)
-                    let userData = ["provider":credential.provider , "name": user.displayName]
-                    
+                    let userData = ["provider":credential.provider , "name": user.displayName ,"profileURL" : user.photoURL?.absoluteString ]
                     self.completeSignIn(id: user.uid, userData: userData as! Dictionary<String, String>)
                     
                 }
@@ -112,8 +161,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     func showLoginScreen(){
-        let voteVC = UIStoryboard.getMainStoryboard().instantiateViewController(withIdentifier: "Vote") as! VoteVC
-        UIApplication.shared.delegate!.window!!.rootViewController = voteVC
+        let feed = UIStoryboard.getMainStoryboard().instantiateViewController(withIdentifier: "Nav") as! UINavigationController
+        UIApplication.shared.delegate!.window!!.rootViewController = feed
+        
         SVProgressHUD.dismiss()
     }
 

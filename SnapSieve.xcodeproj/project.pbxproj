@@ -13,9 +13,19 @@
 		961B8C2A2033F5980048FFC5 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961B8C292033F5980048FFC5 /* User.swift */; };
 		9622547C201E188D00F556F1 /* ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9622547B201E188C00F556F1 /* ProfileVC.swift */; };
 		9622547E201E193F00F556F1 /* ProfileVCCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9622547D201E193F00F556F1 /* ProfileVCCell.swift */; };
+		962DA4D8208C5A4D0022C644 /* SampleFeedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962DA4D7208C5A4D0022C644 /* SampleFeedVC.swift */; };
+		962DA4DA208C5B5D0022C644 /* SampleFeedVCCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962DA4D9208C5B5D0022C644 /* SampleFeedVCCell.swift */; };
+		962DA4DC208C8CF10022C644 /* TextUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962DA4DB208C8CF10022C644 /* TextUtility.swift */; };
 		963BD4A02022222A00549A9A /* ViewBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963BD49F2022222A00549A9A /* ViewBackground.swift */; };
 		963BD4A22022230A00549A9A /* UploadImagesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963BD4A12022230A00549A9A /* UploadImagesVC.swift */; };
 		963BD4A420224C3300549A9A /* PHAssetToImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963BD4A320224C3300549A9A /* PHAssetToImage.swift */; };
+		96602716208B00FA008382AC /* FeedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96602715208B00FA008382AC /* FeedVC.swift */; };
+		96602718208B0177008382AC /* FeedVCCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96602717208B0177008382AC /* FeedVCCell.swift */; };
+		9660271A208BA040008382AC /* RoundedCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96602719208BA040008382AC /* RoundedCorners.swift */; };
+		967BDF5B20B927EF00FD5924 /* RoundedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967BDF5A20B927EF00FD5924 /* RoundedView.swift */; };
+		967BDF5D20B92A6400FD5924 /* RoundedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967BDF5C20B92A6400FD5924 /* RoundedButton.swift */; };
+		967BDF5F20B9501200FD5924 /* PopUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967BDF5E20B9501200FD5924 /* PopUpViewController.swift */; };
+		967CC2DC209B7D80007876D2 /* HandleSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967CC2DB209B7D80007876D2 /* HandleSelection.swift */; };
 		9681A69B201A106D001D26E4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9681A69A201A106D001D26E4 /* AppDelegate.swift */; };
 		9681A6A0201A106D001D26E4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9681A69E201A106D001D26E4 /* Main.storyboard */; };
 		9681A6A2201A106D001D26E4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9681A6A1201A106D001D26E4 /* Assets.xcassets */; };
@@ -33,6 +43,7 @@
 		96EBD33F202638B000F38202 /* GFGeoHashQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EBD335202638B000F38202 /* GFGeoHashQuery.m */; };
 		96EBD340202638B000F38202 /* GFQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EBD336202638B000F38202 /* GFQuery.m */; };
 		96EBD341202638B000F38202 /* GFGeoHash.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EBD337202638B000F38202 /* GFGeoHash.m */; };
+		96F9E9BE20A7E74200C896A9 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F9E9BD20A7E74200C896A9 /* Extensions.swift */; };
 		96FA1F89202E12A10062737F /* OverlayView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 96FA1F88202E12A10062737F /* OverlayView.xib */; };
 		96FA1F8B202E13040062737F /* KolodaOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FA1F8A202E13040062737F /* KolodaOverlay.swift */; };
 		AF1E91E0180B54E24B13A7F0 /* Pods_SnapSieve.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8360721E370AAD459F23440 /* Pods_SnapSieve.framework */; };
@@ -47,9 +58,19 @@
 		961B8C292033F5980048FFC5 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		9622547B201E188C00F556F1 /* ProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVC.swift; sourceTree = "<group>"; };
 		9622547D201E193F00F556F1 /* ProfileVCCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVCCell.swift; sourceTree = "<group>"; };
+		962DA4D7208C5A4D0022C644 /* SampleFeedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleFeedVC.swift; sourceTree = "<group>"; };
+		962DA4D9208C5B5D0022C644 /* SampleFeedVCCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleFeedVCCell.swift; sourceTree = "<group>"; };
+		962DA4DB208C8CF10022C644 /* TextUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextUtility.swift; sourceTree = "<group>"; };
 		963BD49F2022222A00549A9A /* ViewBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewBackground.swift; sourceTree = "<group>"; };
 		963BD4A12022230A00549A9A /* UploadImagesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadImagesVC.swift; sourceTree = "<group>"; };
 		963BD4A320224C3300549A9A /* PHAssetToImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHAssetToImage.swift; sourceTree = "<group>"; };
+		96602715208B00FA008382AC /* FeedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedVC.swift; sourceTree = "<group>"; };
+		96602717208B0177008382AC /* FeedVCCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedVCCell.swift; sourceTree = "<group>"; };
+		96602719208BA040008382AC /* RoundedCorners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCorners.swift; sourceTree = "<group>"; };
+		967BDF5A20B927EF00FD5924 /* RoundedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedView.swift; sourceTree = "<group>"; };
+		967BDF5C20B92A6400FD5924 /* RoundedButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedButton.swift; sourceTree = "<group>"; };
+		967BDF5E20B9501200FD5924 /* PopUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpViewController.swift; sourceTree = "<group>"; };
+		967CC2DB209B7D80007876D2 /* HandleSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleSelection.swift; sourceTree = "<group>"; };
 		9681A697201A106D001D26E4 /* SnapSieve.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnapSieve.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9681A69A201A106D001D26E4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9681A69F201A106D001D26E4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -80,6 +101,7 @@
 		96EBD33B202638B000F38202 /* GFQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFQuery.h; sourceTree = "<group>"; };
 		96EBD33C202638B000F38202 /* GFCircleQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFCircleQuery.h; sourceTree = "<group>"; };
 		96EBD3422026391600F38202 /* SnapSieve-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SnapSieve-Bridging-Header.h"; sourceTree = "<group>"; };
+		96F9E9BD20A7E74200C896A9 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		96FA1F88202E12A10062737F /* OverlayView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OverlayView.xib; sourceTree = "<group>"; };
 		96FA1F8A202E13040062737F /* KolodaOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KolodaOverlay.swift; sourceTree = "<group>"; };
 		C8360721E370AAD459F23440 /* Pods_SnapSieve.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SnapSieve.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -109,10 +131,23 @@
 		960F88A1201F4C8D006D8326 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				962DA4DB208C8CF10022C644 /* TextUtility.swift */,
 				960F88A2201F4CDB006D8326 /* DataServices.swift */,
 				963BD4A320224C3300549A9A /* PHAssetToImage.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		967BDF6020BAB5DE00FD5924 /* Old Files */ = {
+			isa = PBXGroup;
+			children = (
+				962DA4D9208C5B5D0022C644 /* SampleFeedVCCell.swift */,
+				96B44608201BC1DD00FCABA8 /* VoteVC.swift */,
+				962DA4D7208C5A4D0022C644 /* SampleFeedVC.swift */,
+				96FA1F88202E12A10062737F /* OverlayView.xib */,
+				96FA1F8A202E13040062737F /* KolodaOverlay.swift */,
+			);
+			path = "Old Files";
 			sourceTree = "<group>";
 		};
 		9681A68E201A106D001D26E4 = {
@@ -136,6 +171,7 @@
 		9681A699201A106D001D26E4 /* SnapSieve */ = {
 			isa = PBXGroup;
 			children = (
+				967BDF6020BAB5DE00FD5924 /* Old Files */,
 				96FA1F87202E12880062737F /* Utilities */,
 				96EBD32B202638B000F38202 /* GeoFire */,
 				960F88A1201F4C8D006D8326 /* Services */,
@@ -159,6 +195,8 @@
 				96EBD32920260B0000F38202 /* Post.swift */,
 				961B8C292033F5980048FFC5 /* User.swift */,
 				96ACA614203C8F66003081E7 /* Internet Access.swift */,
+				967CC2DB209B7D80007876D2 /* HandleSelection.swift */,
+				96F9E9BD20A7E74200C896A9 /* Extensions.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -170,6 +208,10 @@
 				963BD49F2022222A00549A9A /* ViewBackground.swift */,
 				9606C27E2024379E0035E51A /* ShadowImage.swift */,
 				96DD2D0F20382399009912EB /* ShadowImage_ProfileVC.swift */,
+				96602717208B0177008382AC /* FeedVCCell.swift */,
+				96602719208BA040008382AC /* RoundedCorners.swift */,
+				967BDF5A20B927EF00FD5924 /* RoundedView.swift */,
+				967BDF5C20B92A6400FD5924 /* RoundedButton.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -180,9 +222,10 @@
 				9681A6AC201A6438001D26E4 /* IntroductionManager.swift */,
 				9681A6B1201A661C001D26E4 /* IntroVC3.swift */,
 				9681A6B3201A6627001D26E4 /* LoginVC.swift */,
-				96B44608201BC1DD00FCABA8 /* VoteVC.swift */,
 				9622547B201E188C00F556F1 /* ProfileVC.swift */,
 				963BD4A12022230A00549A9A /* UploadImagesVC.swift */,
+				96602715208B00FA008382AC /* FeedVC.swift */,
+				967BDF5E20B9501200FD5924 /* PopUpViewController.swift */,
 				96E530622039306F006AB589 /* TermsAndCondtionsViewController.swift */,
 			);
 			path = Controller;
@@ -230,8 +273,6 @@
 			isa = PBXGroup;
 			children = (
 				9681A69A201A106D001D26E4 /* AppDelegate.swift */,
-				96FA1F88202E12A10062737F /* OverlayView.xib */,
-				96FA1F8A202E13040062737F /* KolodaOverlay.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -275,7 +316,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Tejas Badani";
 				TargetAttributes = {
 					9681A696201A106D001D26E4 = {
@@ -283,6 +324,9 @@
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Keychain = {
+								enabled = 1;
+							};
+							com.apple.Push = {
 								enabled = 1;
 							};
 						};
@@ -367,48 +411,52 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-SnapSieve/Pods-SnapSieve-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/AlamofireImage/AlamofireImage.framework",
 				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
 				"${BUILT_PRODUCTS_DIR}/CropViewController/CropViewController.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKLoginKit/FBSDKLoginKit.framework",
+				"${BUILT_PRODUCTS_DIR}/Floaty/Floaty.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMOAuth2/GTMOAuth2.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/Gallery/Gallery.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/Hero/Hero.framework",
-				"${BUILT_PRODUCTS_DIR}/Koloda/Koloda.framework",
-				"${BUILT_PRODUCTS_DIR}/NVActivityIndicatorView/NVActivityIndicatorView.framework",
+				"${BUILT_PRODUCTS_DIR}/Nuke/Nuke.framework",
+				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/UICircularProgressRing/UICircularProgressRing.framework",
 				"${BUILT_PRODUCTS_DIR}/ZAlertView/ZAlertView.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
-				"${BUILT_PRODUCTS_DIR}/pop/pop.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AlamofireImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CropViewController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKLoginKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Floaty.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMOAuth2.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Gallery.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Hero.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Koloda.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NVActivityIndicatorView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Nuke.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftKeychainWrapper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UICircularProgressRing.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZAlertView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/pop.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -424,6 +472,7 @@
 			files = (
 				9681A6B2201A661C001D26E4 /* IntroVC3.swift in Sources */,
 				9606C27F2024379E0035E51A /* ShadowImage.swift in Sources */,
+				96602716208B00FA008382AC /* FeedVC.swift in Sources */,
 				9681A69B201A106D001D26E4 /* AppDelegate.swift in Sources */,
 				96B44609201BC1DD00FCABA8 /* VoteVC.swift in Sources */,
 				96ACA615203C8F66003081E7 /* Internet Access.swift in Sources */,
@@ -431,19 +480,29 @@
 				960F88A3201F4CDB006D8326 /* DataServices.swift in Sources */,
 				9622547C201E188D00F556F1 /* ProfileVC.swift in Sources */,
 				963BD4A02022222A00549A9A /* ViewBackground.swift in Sources */,
+				962DA4DC208C8CF10022C644 /* TextUtility.swift in Sources */,
 				961B8C2A2033F5980048FFC5 /* User.swift in Sources */,
 				9681A6B4201A6627001D26E4 /* LoginVC.swift in Sources */,
 				963BD4A420224C3300549A9A /* PHAssetToImage.swift in Sources */,
+				967CC2DC209B7D80007876D2 /* HandleSelection.swift in Sources */,
+				96602718208B0177008382AC /* FeedVCCell.swift in Sources */,
 				96EBD341202638B000F38202 /* GFGeoHash.m in Sources */,
 				96E530632039306F006AB589 /* TermsAndCondtionsViewController.swift in Sources */,
+				962DA4DA208C5B5D0022C644 /* SampleFeedVCCell.swift in Sources */,
+				96F9E9BE20A7E74200C896A9 /* Extensions.swift in Sources */,
 				9622547E201E193F00F556F1 /* ProfileVCCell.swift in Sources */,
 				96FA1F8B202E13040062737F /* KolodaOverlay.swift in Sources */,
 				96EBD340202638B000F38202 /* GFQuery.m in Sources */,
+				962DA4D8208C5A4D0022C644 /* SampleFeedVC.swift in Sources */,
+				967BDF5B20B927EF00FD5924 /* RoundedView.swift in Sources */,
 				9681A6AD201A6438001D26E4 /* IntroductionManager.swift in Sources */,
 				96EBD33D202638B000F38202 /* GFBase32Utils.m in Sources */,
+				967BDF5F20B9501200FD5924 /* PopUpViewController.swift in Sources */,
 				96EBD33F202638B000F38202 /* GFGeoHashQuery.m in Sources */,
+				967BDF5D20B92A6400FD5924 /* RoundedButton.swift in Sources */,
 				963BD4A22022230A00549A9A /* UploadImagesVC.swift in Sources */,
 				96EBD33E202638B000F38202 /* GeoFire.m in Sources */,
+				9660271A208BA040008382AC /* RoundedCorners.swift in Sources */,
 				96DD2D1020382399009912EB /* ShadowImage_ProfileVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -484,6 +543,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -491,6 +551,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -541,6 +602,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -548,6 +610,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -581,9 +644,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5FB40491BE13DB10FB2B0E1C /* Pods-SnapSieve.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
 				CODE_SIGN_ENTITLEMENTS = SnapSieve/SnapSieve.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 34CBZSFQS5;
 				INFOPLIST_FILE = SnapSieve/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -600,7 +664,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E01A2256A73C1B467043DD3A /* Pods-SnapSieve.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
 				CODE_SIGN_ENTITLEMENTS = SnapSieve/SnapSieve.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 34CBZSFQS5;

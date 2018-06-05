@@ -13,8 +13,9 @@ import SwiftKeychainWrapper
 import UICircularProgressRing
 import CoreLocation
 import SVProgressHUD
+import ZAlertView
 import CropViewController
-class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelegate,CropViewControllerDelegate {
+class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelegate,CropViewControllerDelegate,UITextFieldDelegate {
    
     //@IBOutlet weak var circularProgressView: UICircularProgressRingView!
     var locationManager : CLLocationManager!
@@ -28,44 +29,17 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
     var img1 : UIImage?
     var img2 : UIImage?
     var checkString : String!
+    var textFieldCaption : UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
 
         if let i = img1{
-            //let image = i.crop(to: CGSize(width: 343, height: 270))
-            //let image = i.scaled(to: CGSize(width: 343, height: 270))
-            //let image = ResizeImage(image: i, targetSize: CGSize(width: 343, height: 270))
-            
-//            let imageWidth = Double(i.size.width)
-//            let imageHeight = Double(i.size.height)
-//            let width = Double(self.image1.frame.width)
-//            let height = Double(self.image1.frame.height)
-//            let origin = CGPoint(x: (imageWidth - width)/2, y: (imageHeight - height)/2)
-//            let size = CGSize(width: width, height: height)
-            
-            //let image = i.crop(rect: CGRect(x: 0, y: 0, width: image1.frame.width, height: image1.frame.height))
-            
-            //let image = i.crop(rect: CGRect(origin: origin, size: size))
-            //let image = i.resizedImageWithinRect(rectSize: CGSize(width: 343, height: 270))
+        
             let image = cropImageToSquare(image: i)
             image1.image = image
             originalImage1 = i
         }
         if let i = img2{
-            //let image = i.crop(to: CGSize(width: 343, height: 270))
-            //let image = i.scaled(to: CGSize(width: 343, height: 270))
-            //let image = i.crop(rect: CGRect(x: 0, y: 0, width: image2.frame.width, height: image2.frame.height))
-            
-//            let imageWidth = Double(i.size.width)
-//            let imageHeight = Double(i.size.height)
-//            let width = Double(self.image2.frame.width)
-//            let height = Double(self.image2.frame.height)
-//            let origin = CGPoint(x: (imageWidth - width)/2, y: (imageHeight - height)/2)
-//            let size = CGSize(width: width*4, height: height*4)
-            
-            //let image = i.crop(rect: CGRect(x: 0, y: 0, width: image1.frame.width, height: image1.frame.height))
-            
-            //let image = i.crop(rect: CGRect(origin: origin, size: size))
             
             let image = cropImageToSquare(image: i)
             image2.image = image
@@ -96,9 +70,6 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
         // other wise this function will be called every time when user location changes.
         
         // manager.stopUpdatingLocation()
-        
-        print("user latitude = \(userLocation.coordinate.latitude)")
-        print("user longitude = \(userLocation.coordinate.longitude)")
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error)
@@ -106,6 +77,13 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
         print("Error \(error)")
     }
     @IBAction func upload(_ sender: Any) {
+     
+       askForCaption()
+        
+        
+    }
+    
+    func uploadToFirebaseAfterCaption(caption : String){
         //Converts image to data
         let group = DispatchGroup()
         SVProgressHUD.setBackgroundColor(UIColor.lightGray)
@@ -117,7 +95,7 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
                 let imageUID = NSUUID().uuidString
                 let metaData = StorageMetadata()
                 var taskUpload = StorageUploadTask()
-                 taskUpload = DataServices.ds.REF_POST_IMAGES.child(imageUID).putData(imagedata,metadata: metaData){(metaData,error) in
+                taskUpload = DataServices.ds.REF_POST_IMAGES.child(imageUID).putData(imagedata,metadata: metaData){(metaData,error) in
                     
                     if error != nil{
                         print("TEJ: Unable to upload image to firebase storage")
@@ -134,12 +112,12 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
                     }
                     
                 }
-//                let obs = taskUpload.observe(.progress, handler: { (snapshot) in
-//                    print(snapshot.progress)
-//
-//                })
+                //                let obs = taskUpload.observe(.progress, handler: { (snapshot) in
+                //                    print(snapshot.progress)
+                //
+                //                })
             }
-        
+            
             
         }
         
@@ -166,6 +144,7 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
                 }
             }
         }
+        DataServices.ds.REF_POSTS.child(firebasePost.key).child("Caption").setValue(caption)
         group.notify(queue: .main) {
             SVProgressHUD.dismiss()
             SVProgressHUD.setBackgroundColor(UIColor.white)
@@ -174,16 +153,15 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
             SVProgressHUD.showSuccess(withStatus: "Posted! Check back later to see your result!")
             User.u.remainingPosts = User.u.remainingPosts - 1
             DataServices.ds.REF_CURRENT_USER.child("remainingPosts").setValue(User.u.remainingPosts)
+            
             self.dismiss(animated: true, completion: nil)
             
         }
-       
-        
-        
     }
     
     func postToFirebase(imageURL : String,name : String,_ POST_REF : DatabaseReference){
         
+        //Upload the profile image URL to the post / or upload it to the user and get it from there
         let image : Dictionary<String,AnyObject> = ["URL":imageURL as AnyObject, "votes":0 as AnyObject]
         let firebasePost2 = POST_REF.child("user")
         let firebasePost = POST_REF.child(name)
@@ -205,6 +183,41 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
         }
         
     }
+    
+    func askForCaption(){
+        
+     
+        let caption = ZAlertView(title: "Caption", message: "Would you like to add a caption for your Post? (We recommend a kickass caption)", isOkButtonLeft: false, okButtonText: "Upload", cancelButtonText: "Cancel", okButtonHandler: { (alert) in
+            //OK pressed
+            if let captionText = self.textFieldCaption.text{
+                self.uploadToFirebaseAfterCaption(caption: captionText)
+                alert.dismissAlertView()
+            }else{
+                self.uploadToFirebaseAfterCaption(caption: "")
+                alert.dismissAlertView()
+            }
+            
+            
+        }) { (alert) in
+            //Cancel Pressed
+            alert.dismissAlertView()
+        }
+        caption.addTextField("Caption", placeHolder: "Write Caption Here")
+        
+        textFieldCaption = caption.getTextFieldWithIdentifier("Caption")
+        textFieldCaption.textColor = UIColor.black
+        textFieldCaption?.delegate = self
+        textFieldCaption?.maxLength = 50
+        textFieldCaption.returnKeyType = .done
+        caption.allowTouchOutsideToDismiss = true
+        caption.show()
+        
+    }
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
     
     @IBAction func cameraOneClicked(_ sender: Any) {
         isCameraOne = true
@@ -268,9 +281,10 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
         let cropViewController = CropViewController(image: image)
         cropViewController.delegate = self
         
-        cropViewController.aspectRatioPreset = .preset4x3
+        //cropViewController.aspectRatioPreset = .preset4x3
         cropViewController.aspectRatioPickerButtonHidden = true
         cropViewController.aspectRatioLockEnabled = true
+        cropViewController.customAspectRatio = CGSize(width: self.image1.frame.width, height: self.image1.frame.height)
         checkString = "1"
         present(cropViewController, animated: true, completion: nil)
         
@@ -286,47 +300,35 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
 //            self.image2.image = croppedImage
 //            checkString = "Random"
 //        }
+        
+        print("RECT IS : \(rect)")
     }
     func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
-       
-        
-            //let finalImage:CGImage = (image.cgImage?.cropping(to: cropRect))!
-            //let croppedImage = UIImage(cgImage: finalImage)
+
             if checkString == "1"{
-                let croppedImage = originalImage1.crop(rect: cropRect)
-                self.image1.image = croppedImage
+                self.image1.image = image
                 checkString = "Random"
             }else if checkString == "0"{
-                let croppedImage = originalImage2.crop(rect: cropRect)
-                self.image2.image = croppedImage
+                self.image2.image = image
                 checkString = "Random"
             }
-
-        print(cropRect)
-        print(image)
         dismiss(animated: true, completion: nil)
     }
+   
     
     
     @IBAction func cropImage2(_ sender: Any) {
-//        let picker = UIImagePickerController()
-//        let cropper = UIImageCropper(cropRatio: 4/3)
-//        cropper.picker = picker
-//        cropper.delegate = self
-//        cropper.image = originalImage2
-//        cropper.cancelButtonText = "Cancel"
-//        self.present(cropper, animated: true, completion: nil)
-//        checkString = "0"
-        
         let image: UIImage = originalImage2 //Load an image
         let cropViewController = CropViewController(image: image)
         cropViewController.delegate = self
         cropViewController.aspectRatioPickerButtonHidden = true
-        cropViewController.aspectRatioPreset = .preset4x3
+        //cropViewController.aspectRatioPreset = .presetCustom
         cropViewController.aspectRatioLockEnabled = true
+        cropViewController.customAspectRatio = CGSize(width: self.image1.frame.width, height: self.image1.frame.height)
         
         checkString = "0"
         present(cropViewController, animated: true, completion: nil)
+        
     }
     
     func galleryController(_ controller: GalleryController, didSelectVideo video: Video) {
@@ -342,7 +344,6 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
     }
     
     func didCropImage(originalImage: UIImage?, croppedImage: UIImage?) {
-        print("EXECUTED THIS SHIT")
         if checkString == "1"{
         
             self.image1.image = croppedImage

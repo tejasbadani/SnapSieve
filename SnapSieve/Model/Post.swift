@@ -19,6 +19,12 @@ class Post{
     private var _postID : String!
     private var _isVotingEnabled : Bool!
     private var _username : String!
+    private var _caption: String!
+    private var _imgURL1 : URL!
+    private var _imgURL2 : URL!
+    private var _profileURL : String!
+    var image1 : UIImage!
+    var image2 : UIImage!
     var votesImage1 : Float{
         return _votesImage1
     }
@@ -37,22 +43,50 @@ class Post{
     var userName : String{
         return _username
     }
+    var caption : String{
+        return _caption
+    }
+    var imgURL1 : URL {
+        return _imgURL1
+    }
+    var imgURL2 : URL {
+        return _imgURL2
+    }
+    var profileURL : String{
+        return _profileURL
+    }
     var isVotingEnabled : Bool!
-    init(img1URL : String , img2URL : String , votes1: Float , votes2: Float ,postID : String , username : String) {
+    init(img1URL : String , img2URL : String , votes1: Float , votes2: Float ,postID : String , username : String,caption : String) {
         self._votesImage1 = votes1
         self._image1URL = img1URL
         self._image2URL = img2URL
         self._votesImage2 = votes2
         self._postID = postID
         self._username = username
+        self._caption = caption
         _updateVotesImage1Ref = DataServices.ds.REF_POSTS.child(_postID).child("image1")
         _updateVotesImage2Ref = DataServices.ds.REF_POSTS.child(_postID).child("image2")
         _userDidVoteRef = DataServices.ds.REF_CURRENT_USER
     }
-    init(img1URL : String , img2URL : String , votes1: Float , votes2: Float ,postID : String,isVotingEnabled : Bool) {
+    
+    init(img1URL : URL , img2URL : URL , votes1: Float , votes2: Float ,postID : String , username : String,caption : String, profileURL : String) {
         self._votesImage1 = votes1
-        self._image1URL = img1URL
-        self._image2URL = img2URL
+        self._imgURL1 = img1URL
+        self._imgURL2 = img2URL
+        self._votesImage2 = votes2
+        self._postID = postID
+        self._username = username
+        self._caption = caption
+        self._profileURL = profileURL
+        _updateVotesImage1Ref = DataServices.ds.REF_POSTS.child(_postID).child("image1")
+        _updateVotesImage2Ref = DataServices.ds.REF_POSTS.child(_postID).child("image2")
+        _userDidVoteRef = DataServices.ds.REF_CURRENT_USER
+    }
+    
+    init(img1URL : URL , img2URL : URL , votes1: Float , votes2: Float ,postID : String,isVotingEnabled : Bool) {
+        self._votesImage1 = votes1
+        self._imgURL1 = img1URL
+        self._imgURL2 = img2URL
         self._votesImage2 = votes2
         self._postID = postID
         self.isVotingEnabled = isVotingEnabled
@@ -63,8 +97,9 @@ class Post{
    
     func adjustVotes1(){
         User.u.votes = User.u.votes + 1
+        User.u.totalVotes = User.u.totalVotes + 1
         if User.u.remainingPosts < 0{
-            if User.u.votes == (-User.u.votes * 5) + 5{
+            if User.u.votes >= (-User.u.remainingPosts * 5) + 5{
                 User.u.votes = 0
             }
         }else{
@@ -79,12 +114,14 @@ class Post{
         let postID : Dictionary<String,AnyObject> = [_postID : true as AnyObject]
         _userDidVoteRef.child("votedPosts").updateChildValues(postID)
         DataServices.ds.REF_CURRENT_USER.child("votes").setValue(User.u.votes)
+        DataServices.ds.REF_CURRENT_USER.child("totalVotes").setValue(User.u.totalVotes)
         DataServices.ds.REF_CURRENT_USER.child("remainingPosts").setValue(User.u.remainingPosts)
     }
     func adjustVotes2(){
         User.u.votes = User.u.votes + 1
+        User.u.totalVotes = User.u.totalVotes + 1
         if User.u.remainingPosts < 0{
-            if User.u.votes == (-User.u.votes * 5) + 5{
+            if User.u.votes >= (-User.u.remainingPosts * 5) + 5{
                 User.u.votes = 0
             }
         }else{
@@ -100,6 +137,7 @@ class Post{
         let postID : Dictionary<String,AnyObject> = [_postID : true as AnyObject]
         _userDidVoteRef.child("votedPosts").updateChildValues(postID)
         DataServices.ds.REF_CURRENT_USER.child("votes").setValue(User.u.votes)
+        DataServices.ds.REF_CURRENT_USER.child("totalVotes").setValue(User.u.totalVotes)
         DataServices.ds.REF_CURRENT_USER.child("remainingPosts").setValue(User.u.remainingPosts)
     }
 }

@@ -15,7 +15,10 @@ import SwiftKeychainWrapper
 import ZAlertView
 import SVProgressHUD
 import FBSDKCoreKit
-
+import Nuke
+import Alamofire
+import AlamofireImage
+import SwiftyJSON
 class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSignInUIDelegate {
   
     @IBOutlet weak var arrowImage: UIImageView!
@@ -23,6 +26,7 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
     @IBOutlet weak var facebookImage: UIImageView!
     @IBOutlet weak var upperView: UIView!
     var name : String!
+    var profileURL : String!
     var animations: [HeroDefaultAnimationType] = [
         .push(direction: .left),
         .pull(direction: .left),
@@ -136,13 +140,16 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
         let group = DispatchGroup()
         Auth.auth().signIn(with: credential) { (user, error) in
             if(error != nil){
+                group.enter()
                 print("Could not authenticate")
                 self.showAlert()
+                group.leave()
             }else {
                 if let user = user {
                     group.enter()
                     self.fetchUserProfile(completionHandler: { (check) in
-                        let userData = ["provider":credential.provider , "name" : self.name]
+                        let userData = ["provider":credential.provider , "name" : self.name, "profileURL" : self.profileURL]
+                        print("THE ID : \(user.uid)")
                         self.completeSignIn(id: user.uid, userData: userData as! Dictionary<String, String>)
                         group.leave()
                     })
@@ -157,10 +164,20 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
         }
         
     }
-    
+    func getFinalProfileURL(url : String, completion : @escaping (_ finaleURL : String)->()){
+        
+        Alamofire.request(url).responseData{ response in
+            
+            let json = JSON( response.result.value )
+            let urlFinal = json["data"]["url"].stringValue
+            completion(urlFinal)
+
+        }
+       
+        
+    }
     func completeSignIn(id : String, userData : Dictionary<String,String>)
     {
-        //print("EXECUTED")
         KeychainWrapper.standard.set(id, forKey: KEY_UID)
         DataServices.ds.createFirebaseUser(uid: id, userData: userData)
         
@@ -175,44 +192,43 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
             
             if ((error) != nil)
             {
-                //print("Error took place: \(error)")
                 grp.leave()
             }
             else
             {
+                
                 //TODO:Get name from the data
                 if let dict = result as? Dictionary<String,String>{
                     if let name = dict["name"]{
                         KeychainWrapper.standard.set(name, forKey: KEY_NAME)
                         self.name = name
+                    }else{
+                        KeychainWrapper.standard.set("Unknown", forKey: KEY_NAME)
+                        self.name = "Unknown"
                     }
+                    if let id = dict["id"]{
+                        let url = "http://graph.facebook.com/\(id)/picture?height=1024&redirect=false"
+                        self.profileURL = url
+                        
+                    }else{
+                        self.profileURL = ""
+                    }
+                }else{
+                    KeychainWrapper.standard.set("Unknown", forKey: KEY_NAME)
+                    self.name = "Unkown"
                 }
                 grp.leave()
-                print("Print entire fetched result: \(result)")
                 
             }
             
         })
         grp.notify(queue: .main) {
-             completionHandler(true)
+            self.getFinalProfileURL(url: self.profileURL, completion: { (url) in
+                self.profileURL = url
+                completionHandler(true)
+            })
+            
         }
       
     }
-    
-//    func getFBUserInfo() {
-//        let request = FBSDKGraphRequest(graphPath: "me", parameters: ["fields":"email,name"], accessToken: AccessToken.current, httpMethod: .GET, apiVersion: FacebookCore.GraphAPIVersion.defaultVersion)
-//        request.start { (response, result) in
-//            switch result {
-//            case .success(let value):
-//                print(value.dictionaryValue)
-//            case .failed(let error):
-//                print(error)
-//            }
-//        }
-//    }
- 
-    
-    
-    
-    
 }

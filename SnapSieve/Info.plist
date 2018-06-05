@@ -15,7 +15,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.1</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -29,7 +29,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>14</string>
+	<string>1</string>
 	<key>FacebookAppID</key>
 	<string>569409593415781</string>
 	<key>FacebookDisplayName</key>
@@ -48,7 +48,9 @@
 	<key>NSCameraUsageDescription</key>
 	<string>The app needs access to your camera to upload photos of your choice.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need access to your location to generate random posts you can vote on !</string>
+	<string>We need access to your location to generate random posts you can vote on!</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>App would need permission to save image!</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>The app needs access to your library to upload photos of your choice.</string>
 	<key>UILaunchStoryboardName</key>
@@ -68,5 +70,20 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>domain.com</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 </dict>
 </plist>

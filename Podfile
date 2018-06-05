@@ -4,13 +4,18 @@
 target 'SnapSieve' do
   # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
   use_frameworks!
+
+pod 'SwiftyJSON', '~> 4.0'
+pod 'AlamofireImage', '~> 3.3'
+pod 'Alamofire', '~> 4.7'
+pod 'Nuke', '7.0-beta2'
+pod "Floaty", "~> 4.0.0"
+pod 'Firebase/Performance'
+pod 'Crashlytics', '~> 3.10.0'
 pod 'SDWebImage', '~> 4.0'
-pod 'Alamofire', '~> 4.6'
 pod 'ZAlertView'
 pod 'CropViewController'
 pod 'SVProgressHUD'
-pod 'NVActivityIndicatorView'
-pod "Koloda"
 pod 'UICircularProgressRing'
 pod 'Gallery'
 pod 'Hero', '~> 1.0'

@@ -11,6 +11,7 @@ class User{
     
      var userID : String!
      var votes : Int!
+    var totalVotes : Int!
      var remainingPosts : Int!
      static let u = User()
     

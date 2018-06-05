@@ -16,8 +16,9 @@ import GoogleSignIn
 import SwiftKeychainWrapper
 let DB_BASE = Database.database().reference()
 let STORAGE_BASE = Storage.storage().reference()
-let KEY_UID = "uid"
+let KEY_UID = "uid_1.1"
 let KEY_NAME = "name"
+let KEY_PROFILE_IMAGE = "PROFILE"
 class DataServices{
     static let ds = DataServices()
     private var _REF_BASE = DB_BASE

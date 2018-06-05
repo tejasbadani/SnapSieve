@@ -10,6 +10,7 @@ import UIKit
 import UICircularProgressRing
 import SVProgressHUD
 import Firebase
+import SDWebImage
 protocol DeleteButtonProtocol{
     func didShowAlertView(index : Int)
 }
@@ -25,6 +26,7 @@ class ProfileVCCell: UITableViewCell {
         // Initialization code
     }
 
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
@@ -49,7 +51,7 @@ class ProfileVCCell: UITableViewCell {
     func configureCell (post : Post  ){
         
         let sum = post.votesImage1 + post.votesImage2
-        self.totalVotes.text = "Total Votes: \(sum)"
+        self.totalVotes.text = "Total Votes: \(Int(sum))"
         let percentageVotesImage1 = (post.votesImage1/(sum)) * 100
         let percentageVotesImage2 = (post.votesImage2/(sum)) * 100
         print("VOTES 1 \(percentageVotesImage1)")
@@ -66,23 +68,50 @@ class ProfileVCCell: UITableViewCell {
             self.circularView2.innerRingColor = UIColor.green
         }
         
+//        let ref1 = Storage.storage().reference(forURL: post.image1URL)
+//        let ref2 = Storage.storage().reference(forURL: post.image2URL)
+//
+//        ref1.downloadURL(completion: { (url, error) in
+//            if error != nil{
+//                print("ERROR OCCURED")
+//            }else{
+//
+//                //cell.imageView1.sd_setImage(with: url, placeholderImage: #imageLiteral(resourceName: "PlaceholderImage"))
+//                //self.image1Array.insert(cell.imageView2.image!, at: indexPath.row)
+//                self.imageView1.sd_setImage(with: url, completed: nil)
+//
+//                
+//            }
+//        })
+//
+//        ref2.downloadURL(completion: { (url, error) in
+//            if error != nil{
+//                print("ERROR OCCURED")
+//            }else{
+//                self.imageView2.sd_setImage(with: url, completed: nil)
+//            }
+//        })
+//
+        
         if percentageVotesImage2 > 0 && percentageVotesImage1 > 0{
-            self.circularView1.setProgress(value: CGFloat(percentageVotesImage1), animationDuration: 2)
-            self.circularView2.setProgress(value: CGFloat(percentageVotesImage2), animationDuration: 2)
+            self.circularView1.setProgress(to: CGFloat(percentageVotesImage1), duration: 2)
+            self.circularView2.setProgress(to: CGFloat(percentageVotesImage2), duration: 2)
             print("One")
         }else if percentageVotesImage1 > 0 && percentageVotesImage2 == 0{
-            self.circularView2.setProgress(value: 0, animationDuration: 2)
-            self.circularView1.setProgress(value: CGFloat(percentageVotesImage1), animationDuration: 2)
+            self.circularView2.setProgress(to: 0, duration: 2)
+            self.circularView1.setProgress(to: CGFloat(percentageVotesImage1), duration: 2)
             print("Two")
         }else if percentageVotesImage2 > 0 && percentageVotesImage1 == 0{
-            self.circularView1.setProgress(value: 0, animationDuration: 2)
-            self.circularView2.setProgress(value: CGFloat(percentageVotesImage2), animationDuration: 2)
+            self.circularView1.setProgress(to: 0, duration: 2)
+            self.circularView2.setProgress(to: CGFloat(percentageVotesImage2), duration: 2)
             print("three")
         }else if percentageVotesImage1.isNaN && percentageVotesImage2.isNaN {
-            self.circularView1.setProgress(value: 0, animationDuration: 2)
-            self.circularView2.setProgress(value: 0, animationDuration: 2)
+            self.circularView1.setProgress(to: 0, duration: 2)
+            self.circularView2.setProgress(to: 0, duration: 2)
         }
         
+        //self.imageView1.sd_setImage(with: post.image1URL, completed: nil)
+        //self.imageView2.sd_setImage(with: post.image2URL, completed: nil)
         
        
 //        if image1 == nil && image2 == nil{
