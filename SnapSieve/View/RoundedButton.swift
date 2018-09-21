@@ -16,5 +16,17 @@ class RoundedButton: UIButton {
             self.layer.cornerRadius = self.roundedCorner
         }
     }
+    @IBInspectable
+    public var borderWidth : CGFloat = 1.0{
+        didSet{
+            self.layer.borderWidth = self.borderWidth
+        }
+    }
+    @IBInspectable
+    public var borderColor : CGColor = UIColor.black.cgColor{
+        didSet{
+            self.layer.borderColor = self.borderColor
+        }
+    }
 
 }

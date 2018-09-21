@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "0930"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -13,11 +13,11 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES">
             <BuildableReference
-               BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'B350E178DAE2C32CE2A16FE472F1E775'
-               BlueprintName = 'ZAlertView'
-               ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'ZAlertView.framework'>
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "7B329D544F004AF81C81936E29042CDE"
+               BlueprintName = "ZAlertView"
+               ReferencedContainer = "container:Pods.xcodeproj"
+               BuildableName = "ZAlertView.framework">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

@@ -13,10 +13,14 @@ import FBSDKLoginKit
 import SwiftKeychainWrapper
 import SVProgressHUD
 import Fabric
+import SwiftyJSON
 import UserNotifications
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
     var window: UIWindow?
+    
+     let gcmMessageIDKey = "gcm.message_id"
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
@@ -25,26 +29,48 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
         GIDSignIn.sharedInstance().delegate = self
         Fabric.sharedSDK().debug = true
         
+        // [START set_messaging_delegate]
+       // Messaging.messaging().delegate = self
+        // [END set_messaging_delegate]
+        // Register for remote notifications. This shows a permission dialog on first run, to
+        // show the dialog at a more appropriate time move this registration accordingly.
+        // [START register_for_notifications]
+        if #available(iOS 10.0, *) {
+            // For iOS 10 display notification (sent via APNS)
+            UNUserNotificationCenter.current().delegate = self
+            
+            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+            UNUserNotificationCenter.current().requestAuthorization(
+                options: authOptions,
+                completionHandler: {_, _ in })
+        } else {
+            let settings: UIUserNotificationSettings =
+                UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+            application.registerUserNotificationSettings(settings)
+        }
         
-        // iOS 10 support
-         if #available(iOS 10, *) {
-            UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .alert, .sound]){ (granted, error) in }
-            application.registerForRemoteNotifications()
-        }
-            // iOS 9 support
-        else if #available(iOS 9, *) {
-            UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.badge, .sound, .alert], categories: nil))
-            UIApplication.shared.registerForRemoteNotifications()
-        }
-            // iOS 8 support
-        else if #available(iOS 8, *) {
-            UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.badge, .sound, .alert], categories: nil))
-            UIApplication.shared.registerForRemoteNotifications()
-        }
-            // iOS 7 support
-        else {
-            application.registerForRemoteNotifications(matching: [.badge, .sound, .alert])
-        }
+        application.registerForRemoteNotifications()
+
+        
+//        // iOS 10 support
+//         if #available(iOS 10, *) {
+//            UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .alert, .sound]){ (granted, error) in }
+//            application.registerForRemoteNotifications()
+//        }
+//            // iOS 9 support
+//        else if #available(iOS 9, *) {
+//            UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.badge, .sound, .alert], categories: nil))
+//            UIApplication.shared.registerForRemoteNotifications()
+//        }
+//            // iOS 8 support
+//        else if #available(iOS 8, *) {
+//            UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.badge, .sound, .alert], categories: nil))
+//            UIApplication.shared.registerForRemoteNotifications()
+//        }
+//            // iOS 7 support
+//        else {
+//            application.registerForRemoteNotifications(matching: [.badge, .sound, .alert])
+//        }
         
         return true
     }
@@ -61,6 +87,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
     // Called when APNs has assigned the device a unique token
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         // Convert token to string
+        //print("EXECUTED This")
         let deviceTokenString = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})
         
         // Print it to console
@@ -83,9 +110,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
     
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
         
+        SVProgressHUD.show()
         if let error = error {
             // ...
             print(error)
+            SVProgressHUD.dismiss()
             return
         }
         guard let authentication = user.authentication else { return }
@@ -97,8 +126,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
             print("error \(error)")
             return
         }
-        SVProgressHUD.setBackgroundColor(UIColor.lightGray)
-        SVProgressHUD.show()
+        
         
         firebaseAuth(credential: credential , user : user)
         
@@ -114,7 +142,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
                     let abc = user.photoURL?.absoluteString
                     print("\n URL FOR PHOTO \(abc)")
                     KeychainWrapper.standard.set(user.displayName!, forKey: KEY_NAME)
-                    let userData = ["provider":credential.provider , "name": user.displayName ,"profileURL" : user.photoURL?.absoluteString ]
+                    let userData = ["provider":credential.provider , "name": user.displayName ,"profileURL" : user.photoURL?.absoluteString]
                     self.completeSignIn(id: user.uid, userData: userData as! Dictionary<String, String>)
                     
                 }
@@ -129,7 +157,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
         KeychainWrapper.standard.set(id, forKey: KEY_UID)
         showLoginScreen()
         DataServices.ds.createFirebaseUser(uid: id, userData: userData)
-        
+        Messaging.messaging().delegate = self
         
     }
     
@@ -154,6 +182,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
+        DeepLinker.checkDeepLink()
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
 
@@ -169,6 +198,75 @@ class AppDelegate: UIResponder, UIApplicationDelegate,GIDSignInDelegate {
 
 
 }
+
+// [START ios_10_message_handling]
+@available(iOS 10, *)
+extension AppDelegate : UNUserNotificationCenterDelegate {
+    
+    // Receive displayed notifications for iOS 10 devices.
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                willPresent notification: UNNotification,
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        let userInfo = notification.request.content.userInfo
+        
+        // With swizzling disabled you must let Messaging know about the message, for Analytics
+        // Messaging.messaging().appDidReceiveMessage(userInfo)
+        // Print message ID.
+        if let messageID = userInfo[gcmMessageIDKey] {
+            print("Message ID: \(messageID)")
+        }
+        
+        // Print full message.
+        print(userInfo)
+        
+        // Change this to your preferred presentation option
+        completionHandler([])
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
+        let userInfo = response.notification.request.content.userInfo
+        // Print message ID.
+        print("User Info \(userInfo)")
+       
+        DeepLinker.handleRemoteNotification(userInfo as! [AnyHashable : Any])
+        if let messageID = userInfo[gcmMessageIDKey] {
+            print("Message ID: \(messageID)")
+            //Function executed when a notification is clicked
+            
+        }
+        
+        // Print full message.
+        //print(userInfo)
+        
+        completionHandler()
+    }
+}
+// [END ios_10_message_handling]
+
+extension AppDelegate : MessagingDelegate {
+    // [START refresh_token]
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
+        print("Firebase registration token: \(fcmToken)")
+        print("EXECUTED")
+        let dict : Dictionary<String,Bool> = [fcmToken : true]
+        // TODO: If necessary send token to application server.
+        DataServices.ds.REF_CURRENT_USER.child("notificationToken").setValue(dict)
+
+        // Note: This callback is fired at each app startup and whenever a new token is generated.
+    }
+    // [END refresh_token]
+    // [START ios_10_data_message]
+    // Receive data messages on iOS 10+ directly from FCM (bypassing APNs) when the app is in the foreground.
+    // To enable direct data messages, you can set Messaging.messaging().shouldEstablishDirectChannel to true.
+    func messaging(_ messaging: Messaging, didReceive remoteMessage: MessagingRemoteMessage) {
+        print("Received data message: \(remoteMessage.appData)")
+    }
+    // [END ios_10_data_message]
+}
+
+
 extension UIStoryboard{
     //returns storyboard from default bundle if bundle paased as nil.
     public class func getMainStoryboard() -> UIStoryboard{

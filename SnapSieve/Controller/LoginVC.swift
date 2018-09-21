@@ -19,7 +19,7 @@ import Nuke
 import Alamofire
 import AlamofireImage
 import SwiftyJSON
-class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSignInUIDelegate {
+class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSignInUIDelegate,MessagingDelegate {
   
     @IBOutlet weak var arrowImage: UIImageView!
     @IBOutlet weak var googleImage: UIImageView!
@@ -32,7 +32,7 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
         .pull(direction: .left),
         .slide(direction: .down),
         .zoomSlide(direction: .left),
-        .cover(direction: .up),
+        .cover(direction: .down),
         .uncover(direction: .up),
         .pageIn(direction: .left),
         .pageOut(direction: .left),
@@ -59,6 +59,10 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
         let gestureRecogiser = UISwipeGestureRecognizer(target: self, action: #selector(transtionBack))
         gestureRecogiser.direction = .down
         self.upperView.addGestureRecognizer(gestureRecogiser)
+        
+        let upperViewTap = UITapGestureRecognizer(target: self, action: #selector(transtionBack))
+        upperViewTap.numberOfTapsRequired = 1
+        self.upperView.addGestureRecognizer(upperViewTap)
         
         let gestureRecogniser2 = UITapGestureRecognizer(target: self, action: #selector(facebookLogin))
         gestureRecogniser2.numberOfTapsRequired = 1
@@ -92,7 +96,7 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
                     print("User Cancelled login")
                    self.showAlert()
                 }else{
-                    SVProgressHUD.setBackgroundColor(UIColor.lightGray)
+
                     SVProgressHUD.show()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
                         let credential = FacebookAuthProvider.credential(withAccessToken: FBSDKAccessToken.current().tokenString)
@@ -100,6 +104,8 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
 //                            self.fetchUserProfile()
 //                        }
                         self.firebaseAuth(credential: credential, completionHandler: {(check) in
+                            
+                            Messaging.messaging().delegate = self
                             self.transition()
                             SVProgressHUD.dismiss()
                             
@@ -112,6 +118,24 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
        
     }
     
+
+    //    // [START refresh_token]
+        func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
+            print("Firebase registration token: \(fcmToken)")
+            print("EXECUTED")
+            let dict : Dictionary<String,Bool> = [fcmToken : true]
+            // TODO: If necessary send token to application server.
+            DataServices.ds.REF_CURRENT_USER.child("notificationToken").setValue(dict)
+    
+            // Note: This callback is fired at each app startup and whenever a new token is generated.
+        }
+        // [END refresh_token]
+        // [START ios_10_data_message]
+        // Receive data messages on iOS 10+ directly from FCM (bypassing APNs) when the app is in the foreground.
+        // To enable direct data messages, you can set Messaging.messaging().shouldEstablishDirectChannel to true.
+        func messaging(_ messaging: Messaging, didReceive remoteMessage: MessagingRemoteMessage) {
+            print("Received data message: \(remoteMessage.appData)")
+        }
     
     func showAlert(){
         let dialog = ZAlertView(title: "Oops",
@@ -132,6 +156,7 @@ class LoginVC: UIViewController,UIScrollViewDelegate,UITextFieldDelegate,GIDSign
         performSegue(withIdentifier: "facebook", sender: nil)
     }
     @objc func googleLogin(gestureRecogniser : UITapGestureRecognizer){
+        
         GIDSignIn.sharedInstance().uiDelegate = self
         GIDSignIn.sharedInstance().signIn()
     }

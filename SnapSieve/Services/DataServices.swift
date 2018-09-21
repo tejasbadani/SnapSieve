@@ -18,7 +18,13 @@ let DB_BASE = Database.database().reference()
 let STORAGE_BASE = Storage.storage().reference()
 let KEY_UID = "uid_1.1"
 let KEY_NAME = "name"
+let STATUS_KEY = "KEY_STATUS"
 let KEY_PROFILE_IMAGE = "PROFILE"
+let SCREENSHOTS = "ScreenShots_TEST_1"
+let SCREENSHOTS_FIREBASE = "ScreenShots"
+var RELOAD_BOOL : Bool = false
+var NESTED_BACK : Bool = false
+let TUTORIAL_UID = "TUTORIAL_UID_1.1"
 class DataServices{
     static let ds = DataServices()
     private var _REF_BASE = DB_BASE
@@ -35,6 +41,7 @@ class DataServices{
     
     private var _REF_REPORTS = DB_BASE.child("Reports")
     
+    private var _REF_SCREENSHOTS = DB_BASE.child("ScreenShots")
     //Storage References
     private var _REF_POST_IMAGES = STORAGE_BASE.child("post-pics")
     
@@ -44,6 +51,9 @@ class DataServices{
     }
     var REF_REPORTS : DatabaseReference{
         return _REF_REPORTS
+    }
+    var REF_SCREENSHOTS : DatabaseReference{
+        return _REF_SCREENSHOTS
     }
     var REF_POST_ID : DatabaseReference{
         return _REF_POST_ID
@@ -56,9 +66,7 @@ class DataServices{
         let uid = KeychainWrapper.standard.string(forKey: KEY_UID)
         var user  = DatabaseReference()
         if let id = uid {
-            print("ID \(id)")
             user = REF_USERS.child(id)
-            
         }
         return user
         
@@ -76,7 +84,11 @@ class DataServices{
     func createFirebaseUser(uid : String , userData : Dictionary<String,String>){
         REF_USERS.child(uid).updateChildValues(userData)
     }
-    
+    public func randomNumber<T : SignedInteger>(inRange range: ClosedRange<T> = 1...6) -> T {
+        let length = Int64(range.upperBound - range.lowerBound + 1)
+        let value = Int64(arc4random()) % length + Int64(range.lowerBound)
+        return T(value)
+    }
     
 }
 

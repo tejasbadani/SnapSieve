@@ -15,10 +15,11 @@ import CoreLocation
 import SVProgressHUD
 import ZAlertView
 import CropViewController
-class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManagerDelegate,CropViewControllerDelegate,UITextFieldDelegate {
+class UploadImagesVC: UIViewController,GalleryControllerDelegate,CropViewControllerDelegate,UITextFieldDelegate,UITextViewDelegate {
    
+    @IBOutlet weak var uploadButton: UIButton!
+    @IBOutlet weak var captionTextView: TextViewBorder!
     //@IBOutlet weak var circularProgressView: UICircularProgressRingView!
-    var locationManager : CLLocationManager!
     var isCameraOne : Bool = false
     var convert = PHToImage()
     
@@ -32,62 +33,104 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
     var textFieldCaption : UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        uploadButton.isEnabled = true
+        //addTodayDateForAll()
+        self.captionTextView.delegate = self
+        
         if let i = img1{
         
-            let image = cropImageToSquare(image: i)
-            image1.image = image
+            //let image = cropImageToSquare(image: i)
+            image1.image = i
             originalImage1 = i
         }
         if let i = img2{
             
-            let image = cropImageToSquare(image: i)
-            image2.image = image
+            //let image = cropImageToSquare(image: i)
+            image2.image = i
             originalImage2 = i
         }
-    }
-    
-  
-    
-    override func viewWillAppear(_ animated: Bool) {
         
-        determineCurrentLocation()
+        captionTextView.text = "Caption (We recommend a Kickass Caption of 100 characters max)"
+        captionTextView.textColor = UIColor.lightGray
     }
-    func determineCurrentLocation(){
-        locationManager = CLLocationManager()
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestWhenInUseAuthorization()
-        if CLLocationManager.locationServicesEnabled() {
-            locationManager.startUpdatingLocation()
-            //locationManager.startUpdatingHeading()
+    func addTodayDateForAll(){
+        DataServices.ds.REF_POSTS.observeSingleEvent(of: .value) { (snapshot) in
+            for snap in snapshot.children{
+                let userSnap = snap as! DataSnapshot
+                
+                let id = userSnap.key
+                let time = self.getTodayString()
+                DataServices.ds.REF_POSTS.child(id).child("time").setValue(time)
+            }
         }
     }
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        let userLocation:CLLocation = locations[0] as CLLocation
+    
+    func getTodayString() -> String{
         
-        // Call stopUpdatingLocation() to stop listening for location updates,
-        // other wise this function will be called every time when user location changes.
+        let date = Date()
+        let calender = Calendar.current
+        let components = calender.dateComponents([.year,.month,.day,.hour,.minute,.second], from: date)
         
-        // manager.stopUpdatingLocation()
+        let year = components.year
+        let month = components.month
+        let day = components.day
+        let hour = components.hour
+        let minute = components.minute
+        let second = components.second
+        
+        let today_string = String(year!) + "-" + String(month!) + "-" + String(day!) + " " + String(hour!)  + ":" + String(minute!) + ":" +  String(second!)
+        
+        return today_string
+        
+    }
+
+  
+    @IBAction func upload(_ sender: Any) {
+        askForCaption()
+        SVProgressHUD.setBackgroundColor(UIColor.lightGray)
+        SVProgressHUD.show()
+        uploadButton.isEnabled = false
     }
     
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error)
-    {
-        print("Error \(error)")
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == UIColor.lightGray {
+            textView.text = nil
+            textView.textColor = UIColor.black
+        }
     }
-    @IBAction func upload(_ sender: Any) {
-     
-       askForCaption()
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.isEmpty {
+            textView.text = "Caption (We recommend a Kickass Caption of 100 characters max)"
+            textView.textColor = UIColor.lightGray
+        }
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if(text == "\n") {
+            textView.resignFirstResponder()
+            return false
+        }
         
+        if(textView.text.characters.count > 100 && range.length == 0) {
+            let dialog = ZAlertView(title: "Sorry",
+                                    message: "We allow a max of 100 Characters only! ",
+                                    closeButtonText: "Okay",
+                                    closeButtonHandler: { alertView in
+                                        alertView.dismissAlertView()
+            }
+            )
+            dialog.allowTouchOutsideToDismiss = false
+            dialog.show()
+            return false
+        }
         
+        return true
     }
     
     func uploadToFirebaseAfterCaption(caption : String){
         //Converts image to data
         let group = DispatchGroup()
-        SVProgressHUD.setBackgroundColor(UIColor.lightGray)
-        SVProgressHUD.show()
+        
         let firebasePost = DataServices.ds.REF_POSTS.childByAutoId()
         if let image = image1.image {
             if let imagedata = UIImageJPEGRepresentation(image, 0.2){
@@ -103,12 +146,29 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
                     }else{
                         
                         print("TEJ: Successfully uploaded image")
-                        let downloadURL = metaData?.downloadURL()?.absoluteString
+                        //let downloadURL = metaData?.downloadURL()?.absoluteString
+                        DataServices.ds.REF_POST_IMAGES.child(imageUID).downloadURL(completion: { (URL, err) in
+                            if err == nil{
+                                let strURL = URL?.absoluteString
+                                if let str = strURL{
+                                    print("TEJ: url : \(str)")
+                                    self.postToFirebase(imageURL: str,name : "image1",firebasePost)
+                                    group.leave()
+                                    
+                                }else{
+                                    group.leave()
+                                }
+                                
+                                
+                            }else{
+                                print("ERROR")
+                            }
+                        })
                         
-                        if let URL = downloadURL{
-                            self.postToFirebase(imageURL: URL,name : "image1",firebasePost)
-                            group.leave()
-                        }
+//                        if let URL = downloadURL{
+//                            self.postToFirebase(imageURL: URL,name : "image1",firebasePost)
+//                            group.leave()
+//                        }
                     }
                     
                 }
@@ -134,19 +194,55 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
                         group.leave()
                     }else{
                         print("TEJ: Successfully uploaded image")
-                        
-                        let downloadURL = metaData?.downloadURL()?.absoluteString
-                        if let URL = downloadURL{
-                            self.postToFirebase(imageURL: URL,name : "image2",firebasePost)
-                            group.leave()
-                        }
+//                        let downloadURL = metaData?.downloadURL()?.absoluteString
+//                        if let URL = downloadURL{
+//                            self.postToFirebase(imageURL: URL,name : "image2",firebasePost)
+//                            group.leave()
+//                        }
+                        DataServices.ds.REF_POST_IMAGES.child(imageUID).downloadURL(completion: { (URL, err) in
+                            if err == nil{
+                                let strURL = URL?.absoluteString
+                                if let str = strURL{
+                                    print("TEJ: url : \(str)")
+                                    self.postToFirebase(imageURL: str,name : "image2",firebasePost)
+                                    group.leave()
+                                    
+                                }else{
+                                    group.leave()
+                                }
+                                
+                                
+                            }else{
+                                print("ERROR")
+                            }
+                        })
                     }
                 }
             }
         }
         DataServices.ds.REF_POSTS.child(firebasePost.key).child("Caption").setValue(caption)
+        let today = getTodayString()
+        DataServices.ds.REF_POSTS.child(firebasePost.key).child("time").setValue(today)
+        DataServices.ds.REF_CURRENT_USER.child("numberOfPosts").observeSingleEvent(of: .value) { (snapshot) in
+            if snapshot.exists(){
+                var postNumber = snapshot.value as! Int
+                postNumber = postNumber + 1
+                DataServices.ds.REF_CURRENT_USER.child("numberOfPosts").setValue(postNumber)
+            }else{
+                DataServices.ds.REF_CURRENT_USER.child("numberOfPosts").setValue(1)
+            }
+        }
+//        var max : Int!
+//        var service = DataServices()
+//        DataServices.ds.REF_POSTS.observeSingleEvent(of: .value) { (snapshot) in
+//            if snapshot.exists(){
+//                max = Int(snapshot.childrenCount)
+//                let random = service.randomNumber(inRange: 0...max)
+//                DataServices.ds.REF_POSTS.child(firebasePost.key).child("index").setValue(random)
+//            }
+//        }
         group.notify(queue: .main) {
-            SVProgressHUD.dismiss()
+            //SVProgressHUD.dismiss()
             SVProgressHUD.setBackgroundColor(UIColor.white)
             SVProgressHUD.setBorderColor(UIColor.lightGray)
             SVProgressHUD.setBorderWidth(2.0)
@@ -162,6 +258,7 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
     func postToFirebase(imageURL : String,name : String,_ POST_REF : DatabaseReference){
         
         //Upload the profile image URL to the post / or upload it to the user and get it from there
+        
         let image : Dictionary<String,AnyObject> = ["URL":imageURL as AnyObject, "votes":0 as AnyObject]
         let firebasePost2 = POST_REF.child("user")
         let firebasePost = POST_REF.child(name)
@@ -171,46 +268,55 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
         firebasePost2.updateChildValues(userID)
         let id = POST_REF.key
         let postID : Dictionary<String,AnyObject> = [id : true as AnyObject]
+        let dict1 = [id : false]
+        
         DataServices.ds.REF_POSTS.child(id).child("name").setValue(DataServices.ds.CURRENT_USER_NAME)
         DataServices.ds.REF_POSTS.child(id).child("isVotingEnabled").setValue(true)
         DataServices.ds.REF_CURRENT_USER.child("posts").updateChildValues(postID)
-        DataServices.ds.REF_CURRENT_USER.child("votedPosts").updateChildValues(postID)
+        DataServices.ds.REF_CURRENT_USER.child("votedPosts").updateChildValues(dict1)
         DataServices.ds.REF_POST_ID.updateChildValues(postID)
-        let geoRef = POST_REF
-        let geoFire = GeoFire(firebaseRef: geoRef)
-        if let location = locationManager.location{
-            geoFire.setLocation(location, forKey: POST_REF.key)
-        }
+//        let geoRef = POST_REF
+//        let geoFire = GeoFire(firebaseRef: geoRef)
+//        if let location = locationManager.location{
+//            geoFire.setLocation(location, forKey: POST_REF.key)
+//        }
         
     }
     
     func askForCaption(){
         
      
-        let caption = ZAlertView(title: "Caption", message: "Would you like to add a caption for your Post? (We recommend a kickass caption)", isOkButtonLeft: false, okButtonText: "Upload", cancelButtonText: "Cancel", okButtonHandler: { (alert) in
-            //OK pressed
-            if let captionText = self.textFieldCaption.text{
-                self.uploadToFirebaseAfterCaption(caption: captionText)
-                alert.dismissAlertView()
-            }else{
-                self.uploadToFirebaseAfterCaption(caption: "")
-                alert.dismissAlertView()
-            }
-            
-            
-        }) { (alert) in
-            //Cancel Pressed
-            alert.dismissAlertView()
+//        let caption = ZAlertView(title: "Caption", message: "Would you like to add a caption for your Post? (We recommend a kickass caption)", isOkButtonLeft: false, okButtonText: "Upload", cancelButtonText: "Cancel", okButtonHandler: { (alert) in
+//            //OK pressed
+//            if let captionText = self.textFieldCaption.text{
+//                self.uploadToFirebaseAfterCaption(caption: captionText)
+//                alert.dismissAlertView()
+//            }else{
+//                self.uploadToFirebaseAfterCaption(caption: "")
+//                alert.dismissAlertView()
+//            }
+//
+//
+//        }) { (alert) in
+//            //Cancel Pressed
+//            alert.dismissAlertView()
+//        }
+//        caption.addTextField("Caption", placeHolder: "Write Caption Here")
+//
+//        textFieldCaption = caption.getTextFieldWithIdentifier("Caption")
+//        textFieldCaption.textColor = UIColor.black
+//        textFieldCaption?.delegate = self
+//        textFieldCaption?.maxLength = 100
+//        textFieldCaption.returnKeyType = .done
+//        caption.allowTouchOutsideToDismiss = true
+//        caption.show()
+        if captionTextView.text == "Caption (We recommend a Kickass Caption of 100 characters max)"{
+            self.uploadToFirebaseAfterCaption(caption: "")
+        }else{
+            self.uploadToFirebaseAfterCaption(caption: captionTextView.text)
         }
-        caption.addTextField("Caption", placeHolder: "Write Caption Here")
-        
-        textFieldCaption = caption.getTextFieldWithIdentifier("Caption")
-        textFieldCaption.textColor = UIColor.black
-        textFieldCaption?.delegate = self
-        textFieldCaption?.maxLength = 50
-        textFieldCaption.returnKeyType = .done
-        caption.allowTouchOutsideToDismiss = true
-        caption.show()
+       // print("TEJ: Caption \(captionTextView.text)")
+        //self.uploadToFirebaseAfterCaption(caption: captionTextView.text)
         
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -228,11 +334,13 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
         showGallery()
     }
     @IBAction func cancelClicked(_ sender: Any) {
+        
+        dismiss(animated: true, completion: nil)
         originalImage1 = nil
         originalImage2 = nil
         image1.image = nil
         image2.image = nil
-        dismiss(animated: true, completion: nil)
+        
         
     }
     
@@ -281,10 +389,10 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
         let cropViewController = CropViewController(image: image)
         cropViewController.delegate = self
         
-        //cropViewController.aspectRatioPreset = .preset4x3
+        cropViewController.aspectRatioPreset = .preset4x3
         cropViewController.aspectRatioPickerButtonHidden = true
         cropViewController.aspectRatioLockEnabled = true
-        cropViewController.customAspectRatio = CGSize(width: self.image1.frame.width, height: self.image1.frame.height)
+        //cropViewController.customAspectRatio = CGSize(width: self.image1.frame.width, height: self.image1.frame.height)
         checkString = "1"
         present(cropViewController, animated: true, completion: nil)
         
@@ -323,8 +431,9 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CLLocationManag
         cropViewController.delegate = self
         cropViewController.aspectRatioPickerButtonHidden = true
         //cropViewController.aspectRatioPreset = .presetCustom
+        cropViewController.aspectRatioPreset = .preset4x3
         cropViewController.aspectRatioLockEnabled = true
-        cropViewController.customAspectRatio = CGSize(width: self.image1.frame.width, height: self.image1.frame.height)
+        //cropViewController.customAspectRatio = CGSize(width: self.image1.frame.width, height: self.image1.frame.height)
         
         checkString = "0"
         present(cropViewController, animated: true, completion: nil)

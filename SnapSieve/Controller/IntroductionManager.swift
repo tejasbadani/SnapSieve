@@ -53,6 +53,8 @@ class IntroductionManager: UIPageViewController,UIPageViewControllerDataSource,U
         
     }
     override func viewDidLayoutSubviews() {
+        UserDefaults.standard.setValue(false, forKey:"_UIConstraintBasedLayoutLogUnsatisfiable")
+
         if let _ = KeychainWrapper.standard.string(forKey: KEY_UID){
 
             performSegue(withIdentifier: "segue", sender: nil)
@@ -83,7 +85,7 @@ class IntroductionManager: UIPageViewController,UIPageViewControllerDataSource,U
         
         //guard nextIndex < pages.count else { return pages.first }
         
-        guard pages.count > nextIndex else { return nil         }
+        guard pages.count > nextIndex else {return nil}
         
         return pages[nextIndex]
     }
@@ -94,6 +96,10 @@ class IntroductionManager: UIPageViewController,UIPageViewControllerDataSource,U
         guard previousIndex >= 0          else { return nil }
         guard pages.count > previousIndex else { return nil }
         return pages[previousIndex]
+    }
+    func showProfileVC (){
+        let profile = ProfileVC1()
+        self.navigationController?.pushViewController(profile, animated: true)
     }
     
     

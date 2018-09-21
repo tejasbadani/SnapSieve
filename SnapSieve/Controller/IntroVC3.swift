@@ -39,6 +39,10 @@ class IntroVC3: UIViewController {
         gestureRecogArrow.numberOfTapsRequired = 1
         arrowImage.addGestureRecognizer(gestureRecogArrow)
         
+        let tapLowerView = UITapGestureRecognizer(target: self, action: #selector(transiton))
+        tapLowerView.numberOfTapsRequired = 1
+        self.lowerView.addGestureRecognizer(tapLowerView)
+        
     }
 
     @objc func transiton(){

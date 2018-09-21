@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "0930"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7F3F58AE25A385A94DFD4CA3977BD934"
+               BlueprintIdentifier = "C3C82F44F8C1629AD022777326A6B93B"
                BuildableName = "Pods_SnapSieve.framework"
                BlueprintName = "Pods-SnapSieve"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7F3F58AE25A385A94DFD4CA3977BD934"
+            BlueprintIdentifier = "C3C82F44F8C1629AD022777326A6B93B"
             BuildableName = "Pods_SnapSieve.framework"
             BlueprintName = "Pods-SnapSieve"
             ReferencedContainer = "container:Pods.xcodeproj">

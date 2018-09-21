@@ -25,7 +25,7 @@ class HandleSelection{
             dialog.show()
         }
     }
-    func animateCircularView1(totalVotes : Float , numeratorVotes : Float , circularView : UICircularProgressRingView , imageView : UIImageView){
+    func animateCircularView1(totalVotes : Float , numeratorVotes : Float , circularView : UICircularProgressRing , imageView : UIImageView){
         
         circularView.isHidden = false
         
@@ -38,7 +38,7 @@ class HandleSelection{
             circularView.innerRingColor = UIColor.green
         }
         
-        circularView.setProgress(to: CGFloat(votePercentage), duration: 3) {
+        circularView.startProgress(to: CGFloat(votePercentage), duration: 3) {
             
         }
         
