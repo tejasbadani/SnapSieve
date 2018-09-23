@@ -221,8 +221,12 @@ class UploadImagesVC: UIViewController,GalleryControllerDelegate,CropViewControl
             }
         }
         DataServices.ds.REF_POSTS.child(firebasePost.key).child("Caption").setValue(caption)
-        let today = getTodayString()
-        DataServices.ds.REF_POSTS.child(firebasePost.key).child("time").setValue(today)
+        //let today = getTodayString()
+        let dateFormatter : DateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let date = Date()
+        let dateString = dateFormatter.string(from: date)
+        DataServices.ds.REF_POSTS.child(firebasePost.key).child("time").setValue(dateString)
         DataServices.ds.REF_CURRENT_USER.child("numberOfPosts").observeSingleEvent(of: .value) { (snapshot) in
             if snapshot.exists(){
                 var postNumber = snapshot.value as! Int

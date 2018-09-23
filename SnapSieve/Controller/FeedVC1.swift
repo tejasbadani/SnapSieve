@@ -40,7 +40,7 @@ class FeedVC1: UIViewController , UITableViewDelegate , UITableViewDataSource ,s
     var isViewing : Bool = false
     var disabledUsers = [String]()
     var countOfInitialPosts : Int = 0
-    
+    var tempArray  = [String]()
     @IBOutlet weak var tableView: UITableView!
     
     lazy var refreshControl: UIRefreshControl = {
@@ -81,13 +81,48 @@ class FeedVC1: UIViewController , UITableViewDelegate , UITableViewDataSource ,s
         setUpZLAlert()
         checkConnection()
         screenShotDetection()
-        
+    }
+    
+    func addTimeToAllPosts(){
+        let grp = DispatchGroup()
+        DataServices.ds.REF_POSTS.observe(.value) { (snapshot) in
+            if snapshot.exists(){
+                for obj in snapshot.children{
+                    grp.enter()
+                    let shot = obj as! DataSnapshot
+                    let id = shot.key
+                    self.tempArray.append(id)
+                    grp.leave()
+                }
+            }
+        }
+        grp.notify(queue: .main) {
+            //Reverse array
+            DispatchQueue.main.asyncAfter(deadline: .now() + 15, execute: {
+                self.tempArray.reverse()
+                print("TEMP ARRAY \(self.tempArray)")
+                for obj in self.tempArray{
+                    
+                    sleep(1)
+                    let dateFormatter : DateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                    let date = Date()
+                    let dateString = dateFormatter.string(from: date)
+                    print("TIME \(dateString)")
+                    let interval = date.timeIntervalSince1970
+                    print("INTERVAL \(interval)")
+                    DataServices.ds.REF_POSTS.child(obj).updateChildValues(["time":dateString])
+                }
+            })
+           
+        }
     }
 
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         //Reloading the Feed by clearing all the old data
         SVProgressHUD.show()
         startKey = nil
+        timeKey = nil
         previousStartKey = nil
         posts = []
         postsArray = []
@@ -228,6 +263,7 @@ class FeedVC1: UIViewController , UITableViewDelegate , UITableViewDataSource ,s
         currentPosts = []
         previousStartKey = nil
         startKey = nil
+        timeKey = nil
         if Connectivity.isConnectedToInternet(){
             retrieveUserData {
                 self.handlePagination()
@@ -337,41 +373,51 @@ class FeedVC1: UIViewController , UITableViewDelegate , UITableViewDataSource ,s
     
     //New algorithm using Pagination.
     var startKey : String!
+    var timeKey : String!
     var previousStartKey : String!
     func handlePagination(){
-        let ref = DataServices.ds.REF_POSTS.queryOrderedByKey()
-        if startKey == nil{
-            ref.queryLimited(toLast: 8).observeSingleEvent(of: .value) { [unowned self](snapshot) in
+        let ref = DataServices.ds.REF_POSTS.queryOrdered(byChild: "time")
+        if timeKey == nil{
+            ref.queryLimited(toFirst: 8).observeSingleEvent(of: .value) { [unowned self](snapshot) in
                 if snapshot.exists(){
                     guard let children = snapshot.children.allObjects.last as? DataSnapshot else {return}
+                    let timeData = children.value as! [String : Any]
+                    print("Time value \(timeData)")
                     for snap in snapshot.children{
                         let userSnap = snap as! DataSnapshot
                         let id = userSnap.key
-                        if !(self.currentPosts.contains(id)){
+                        //let data = userSnap.value as! [String : Any]
+                        if !(self.currentPosts.contains(id)) && !(self.postsArray.contains(id)){
                             print("ID INSIDE::: \(id)")
                             self.postsArray.append(id)
                             self.countOfInitialPosts += 1
                             self.getDataForPost(postID: id)
-
                         }
                         
                     }
                     if self.countOfInitialPosts < 8{
-                        self.startKey = children.key
+                        if let time = timeData["time"] as? String{
+                            self.timeKey = time
+                        }
+                        //self.startKey = children.key
                         self.handlePagination()
                     }else{
-                        self.startKey = children.key
+                        //self.startKey = children.key
+                        if let time = timeData["time"] as? String{
+                            self.timeKey = time
+                        }
                     }
                 }
             }
         }else{
-            previousStartKey = self.startKey
-            ref.queryStarting(atValue: startKey).queryLimited(toFirst: 8).observeSingleEvent(of: .value) {[unowned self] (snapshot) in
+            previousStartKey = self.timeKey
+            ref.queryStarting(atValue: self.timeKey).queryLimited(toFirst: 8).observeSingleEvent(of: .value) {[unowned self] (snapshot) in
                 guard let children = snapshot.children.allObjects.last as? DataSnapshot else {return}
+                let timeData = children.value as! [String : Any]
                 for snap in snapshot.children{
                     let userSnap = snap as! DataSnapshot
                     let id = userSnap.key
-                    if !(self.currentPosts.contains(id)) && !(id == self.startKey){
+                    if !(self.currentPosts.contains(id)) && !(id == self.timeKey) && !(self.postsArray.contains(id)){
                         print("ID INSIDE::: \(id)")
                         self.postsArray.append(id)
                         self.countOfInitialPosts += 1
@@ -380,11 +426,14 @@ class FeedVC1: UIViewController , UITableViewDelegate , UITableViewDataSource ,s
                     }
                     
                 }
-                self.startKey = children.key
-                if self.previousStartKey == self.startKey{
+                //self.startKey = children.key
+                if let time = timeData["time"] as? String{
+                    self.timeKey = time
+                }
+                if self.previousStartKey == self.timeKey{
                     //TODO: Reached the end of the number of posts
                     self.spinner.isHidden = true
-                    if self.posts.count == 0{
+                    if self.postsArray.count == 0{
                         //Indicate that the posts have been voted
                         let dialog = ZAlertView(title: "Wow",
                                                 message: "You seem to have voted for all the posts!",
