@@ -48,6 +48,8 @@
 		96B44609201BC1DD00FCABA8 /* VoteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96B44608201BC1DD00FCABA8 /* VoteVC.swift */; };
 		96C009072110829400FAFD5D /* TutorialVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C009062110829400FAFD5D /* TutorialVC.swift */; };
 		96C009092110833300FAFD5D /* TutorialButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C009082110833300FAFD5D /* TutorialButton.swift */; };
+		96D1C837216A112800DF1040 /* ViewReactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D1C836216A112800DF1040 /* ViewReactions.swift */; };
+		96D1C839216A118600DF1040 /* ViewReactionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D1C838216A118600DF1040 /* ViewReactionsCell.swift */; };
 		96DD2D1020382399009912EB /* ShadowImage_ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96DD2D0F20382399009912EB /* ShadowImage_ProfileVC.swift */; };
 		96E530632039306F006AB589 /* TermsAndCondtionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E530622039306F006AB589 /* TermsAndCondtionsViewController.swift */; };
 		96EB1DAA20D42D09009CCF8E /* ProfileVC1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EB1DA920D42D09009CCF8E /* ProfileVC1.swift */; };
@@ -111,6 +113,8 @@
 		96B44608201BC1DD00FCABA8 /* VoteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteVC.swift; sourceTree = "<group>"; };
 		96C009062110829400FAFD5D /* TutorialVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialVC.swift; sourceTree = "<group>"; };
 		96C009082110833300FAFD5D /* TutorialButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialButton.swift; sourceTree = "<group>"; };
+		96D1C836216A112800DF1040 /* ViewReactions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewReactions.swift; sourceTree = "<group>"; };
+		96D1C838216A118600DF1040 /* ViewReactionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewReactionsCell.swift; sourceTree = "<group>"; };
 		96DD2D0F20382399009912EB /* ShadowImage_ProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowImage_ProfileVC.swift; sourceTree = "<group>"; };
 		96E530622039306F006AB589 /* TermsAndCondtionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndCondtionsViewController.swift; sourceTree = "<group>"; };
 		96EB1DA920D42D09009CCF8E /* ProfileVC1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVC1.swift; sourceTree = "<group>"; };
@@ -253,6 +257,7 @@
 				967BDF5C20B92A6400FD5924 /* RoundedButton.swift */,
 				9690988220E541FD0054B3E3 /* TextViewBorder.swift */,
 				96C009082110833300FAFD5D /* TutorialButton.swift */,
+				96D1C838216A118600DF1040 /* ViewReactionsCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -275,6 +280,7 @@
 				9669758920DF990500B47DF9 /* ViewVotedPostVC.swift */,
 				960096C720E8CC1600E58175 /* PopVC2.swift */,
 				96C009062110829400FAFD5D /* TutorialVC.swift */,
+				96D1C836216A112800DF1040 /* ViewReactions.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -536,6 +542,7 @@
 				96EB1DAA20D42D09009CCF8E /* ProfileVC1.swift in Sources */,
 				96EBD32A20260B0000F38202 /* Post.swift in Sources */,
 				960F88A3201F4CDB006D8326 /* DataServices.swift in Sources */,
+				96D1C837216A112800DF1040 /* ViewReactions.swift in Sources */,
 				9622547C201E188D00F556F1 /* ProfileVC.swift in Sources */,
 				963BD4A02022222A00549A9A /* ViewBackground.swift in Sources */,
 				962DA4DC208C8CF10022C644 /* TextUtility.swift in Sources */,
@@ -552,6 +559,7 @@
 				96F9E9BE20A7E74200C896A9 /* Extensions.swift in Sources */,
 				9622547E201E193F00F556F1 /* ProfileVCCell.swift in Sources */,
 				96FA1F8B202E13040062737F /* KolodaOverlay.swift in Sources */,
+				96D1C839216A118600DF1040 /* ViewReactionsCell.swift in Sources */,
 				96EBD340202638B000F38202 /* GFQuery.m in Sources */,
 				962A3A3B20D55B2500BA5F89 /* ViewUserVC.swift in Sources */,
 				96EB1DAC20D42D37009CCF8E /* ProfileVCCollectionCell.swift in Sources */,

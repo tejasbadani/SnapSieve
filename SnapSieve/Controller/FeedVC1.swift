@@ -725,6 +725,8 @@ class FeedVC1: UIViewController , UITableViewDelegate , UITableViewDataSource ,s
         let currentCell = self.tableView.cellForRow(at: indexPath!) as! FeedVCCell
         currentPost.adjustVotes1()
         handleSelection.animateCircularView1(totalVotes: currentPost.votesImage1 + currentPost.votesImage2, numeratorVotes: currentPost.votesImage1, circularView: currentCell.progressRing1, imageView: currentCell.imageView1)
+        currentCell.progressRing1.outerRingColor = UIColor.blue
+        currentCell.progressRing1.outerRingWidth = 3.0
         handleSelection.animateCircularView1(totalVotes: currentPost.votesImage1 + currentPost.votesImage2, numeratorVotes: currentPost.votesImage2, circularView: currentCell.progressRing2, imageView: currentCell.imageView2)
         handleSelection.voteCheck()
         currentCell.imageView1.isUserInteractionEnabled = false
@@ -742,6 +744,8 @@ class FeedVC1: UIViewController , UITableViewDelegate , UITableViewDataSource ,s
         let currentCell = self.tableView.cellForRow(at: indexPath!) as! FeedVCCell
         currentPost.adjustVotes2()
         handleSelection.animateCircularView1(totalVotes: currentPost.votesImage1 + currentPost.votesImage2, numeratorVotes: currentPost.votesImage2, circularView: currentCell.progressRing2, imageView: currentCell.imageView2)
+        currentCell.progressRing2.outerRingColor = UIColor.blue
+        currentCell.progressRing2.outerRingWidth = 3.0
         handleSelection.animateCircularView1(totalVotes: currentPost.votesImage1 + currentPost.votesImage2, numeratorVotes: currentPost.votesImage1, circularView: currentCell.progressRing1, imageView: currentCell.imageView1)
         handleSelection.voteCheck()
         currentCell.imageView1.isUserInteractionEnabled = false

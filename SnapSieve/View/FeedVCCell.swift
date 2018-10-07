@@ -10,13 +10,14 @@ import UIKit
 import ZAlertView
 import UICircularProgressRing
 import WCLShineButton
-
+import FloatRatingView
 protocol showUserProtocol{
     func didShowView(index : Int)
 }
 class FeedVCCell: UITableViewCell {
     let impact = UIImpactFeedbackGenerator(style: .light)
 
+    @IBOutlet weak var ratingView: FloatRatingView!
     @IBOutlet weak var progressRing2: UICircularProgressRing!
     @IBOutlet weak var progressRing1: UICircularProgressRing!
     @IBOutlet weak var imageView2: UIImageView!
@@ -161,6 +162,8 @@ class FeedVCCell: UITableViewCell {
         self.userNameLabel.text = post.userName
         self.captionLabel.text = post.caption
         self.statusLabel.text = post.status
+        self.ratingView.rating = post.rating
+        self.ratingView.isUserInteractionEnabled = false
         checkIfExists()
         
     }

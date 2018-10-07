@@ -366,6 +366,15 @@ class ViewPostVC: UIViewController {
         dialog2.show()
     }
     
+    @IBAction func viewReactors(_ sender: Any) {
+        performSegue(withIdentifier: "view", sender: nil)
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "view"{
+            let destination = segue.destination as! ViewReactions
+            destination.post = post
+        }
+    }
 }
 
 
