@@ -3266,14 +3266,14 @@ If you have any questions about these Terms, please contact us.</string>
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="83.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="XSE-hA-k2D" customClass="RoundedCorners" customModule="SnapSieve" customModuleProvider="target">
+                                                <imageView clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="XSE-hA-k2D" customClass="RoundedCorners" customModule="SnapSieve" customModuleProvider="target">
                                                     <rect key="frame" x="15" y="16" width="50" height="50"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="50" id="5Pz-zA-F0r"/>
                                                         <constraint firstAttribute="height" constant="50" id="LsC-if-OZR"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GeH-8K-A36">
+                                                <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GeH-8K-A36">
                                                     <rect key="frame" x="73" y="16" width="229" height="21"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="21" id="EaX-If-did"/>
@@ -3337,6 +3337,7 @@ If you have any questions about these Terms, please contact us.</string>
                     <navigationItem key="navigationItem" id="376-GF-38D"/>
                     <connections>
                         <outlet property="tableView" destination="kSz-Kl-ouM" id="lvU-h5-bVc"/>
+                        <segue destination="iDL-Ua-46M" kind="show" identifier="viewUser2" id="fYK-1T-iZK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5de-U8-Cd7" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -3374,6 +3375,6 @@ If you have any questions about these Terms, please contact us.</string>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="m4w-Rj-jOC"/>
-        <segue reference="hvW-vw-dSh"/>
+        <segue reference="fYK-1T-iZK"/>
     </inferredMetricsTieBreakers>
 </document>

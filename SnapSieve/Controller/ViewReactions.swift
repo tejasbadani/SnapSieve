@@ -11,9 +11,8 @@ import SDWebImage
 import Firebase
 import WCLShineButton
 import SVProgressHUD
-class ViewReactions: UIViewController,UITableViewDelegate,UITableViewDataSource {
-   
-
+class ViewReactions: UIViewController,UITableViewDelegate,UITableViewDataSource ,showUserProtocol{
+  
     @IBOutlet weak var tableView: UITableView!
     var post : Post!
     var likeUsers  = [User]()
@@ -339,11 +338,13 @@ class ViewReactions: UIViewController,UITableViewDelegate,UITableViewDataSource 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? ViewReactionsCell{
             let currentUser = totalUsers[indexPath.row]
+            cell.delegate = self
             cell.nameLabel.text = currentUser.user
             let url = URL(string: currentUser.userURL)
             if let url = url {
                 cell.profileImageView.sd_setImage(with: url, placeholderImage: #imageLiteral(resourceName: "Profile"), options: [.scaleDownLargeImages], completed: nil)
             }
+            
             cell.statusLabel.text = currentUser.status
             if currentUser.type == "likeUser"{
                 var param1 = WCLShineParams()
@@ -404,5 +405,19 @@ class ViewReactions: UIViewController,UITableViewDelegate,UITableViewDataSource 
     }
     override func viewDidDisappear(_ animated: Bool) {
         SVProgressHUD.dismiss()
+    }
+    func didShowView(index: Int) {
+        //When a row is clicked in the tableView
+        performSegue(withIdentifier: "viewUser2", sender: index)
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if segue.identifier == "viewUser2"{
+            let viewUser = segue.destination as! ViewUserVC
+            let index = sender as! Int
+            viewUser.userName = totalUsers[index].user
+            viewUser.userIDsample = totalUsers[index].ID
+            viewUser.profileURL = totalUsers[index].userURL
+        }
     }
 }
