@@ -2,6 +2,10 @@
 
 **Snapsieve** is a simple and intuitive iOS app built with **Swift** and **Xcode** that helps users **compare two or more images side by side** — perfect for deciding between similar photos, outfits, products, or designs.
 
+- Screenshots preview
+
+  <img width="1334" height="326" alt="Snapsieve" src="https://github.com/user-attachments/assets/400d4e8b-1dea-4186-9cf6-f34592ca3bfd" />
+
 ---
 
 ## ✨ Features
@@ -98,8 +102,5 @@ This flow keeps the core task—picking the best visual option—front and cente
   
   <img width="326" height="1334" alt="Snapsieve" src="https://github.com/user-attachments/assets/417d9c5d-c2c1-4dfc-94e6-3bff802c4d9f" />
 
-- Collection of Screenshots
-
-  <img width="1334" height="326" alt="Snapsieve" src="https://github.com/user-attachments/assets/400d4e8b-1dea-4186-9cf6-f34592ca3bfd" />
 
 
