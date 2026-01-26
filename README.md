@@ -79,22 +79,24 @@ This flow keeps the core task—picking the best visual option—front and cente
 
 
 - Onboarding / intro screen
-  ![screen-0](https://github.com/user-attachments/assets/92c0f0bd-2393-484b-b93a-6efd0f1d28ce)
+  
+  <img width="326" height="1334" alt="Snapsieve" src="https://github.com/user-attachments/assets/92c0f0bd-2393-484b-b93a-6efd0f1d28ce" />
 
 - Snap comparison feed (double‑tap to like)
-  ![screen-1](https://github.com/user-attachments/assets/a4a46a94-e47f-4ac4-af27-ce24cd787954)
+  
+  <img width="326" height="1334" alt="Snapsieve" src="https://github.com/user-attachments/assets/a4a46a94-e47f-4ac4-af27-ce24cd787954" />
 
 - SnapReactions and action bar
-  ![screen-2](https://github.com/user-attachments/assets/34761800-06f5-445e-8562-2b6f7d111589)
+  
+  <img width="326" height="1334" alt="Snapsieve" src="https://github.com/user-attachments/assets/34761800-06f5-445e-8562-2b6f7d111589" />
 
 - Profile with SnapSieve Rating and snap grid
-  ![screen-3](https://github.com/user-attachments/assets/d467eeb9-ae7e-49a0-a3f3-c05491dbbef8)
+  
+  <img width="326" height="1334" alt="Snapsieve" src="https://github.com/user-attachments/assets/d467eeb9-ae7e-49a0-a3f3-c05491dbbef8" />
 
 - Report / offensive content flow
-  ![screen-5](https://github.com/user-attachments/assets/417d9c5d-c2c1-4dfc-94e6-3bff802c4d9f)
-
-
-
+  
+  <img width="326" height="1334" alt="Snapsieve" src="https://github.com/user-attachments/assets/417d9c5d-c2c1-4dfc-94e6-3bff802c4d9f" />
 
 - Collection of Screenshots
 
